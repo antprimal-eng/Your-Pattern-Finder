@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>What Do You Reach For First?</title>
+<title>Find Your Pattern — The Pattern Lab</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -14,948 +14,682 @@
     --accent-light: #E8EEF3;
     --card-bg: #FFFFFF;
     --border: #E2E2DD;
-    --selected: #3B5C7A;
-    --selected-bg: #EDF2F7;
     --hover: #F5F5F0;
     --shadow: 0 2px 12px rgba(44, 58, 71, 0.06);
     --shadow-hover: 0 4px 20px rgba(44, 58, 71, 0.1);
     --radius: 10px;
-    
-    /* Instinct accent colors */
-    --c-authenticating: #D33A2C;
-    --c-luminating: #7C4BB3;
-    --c-proposing: #2B6FD0;
-    --c-resolving: #1F8A4C;
-    --c-initiating: #9A7A1C;
-    --c-maintaining: #7A3F1D;
+    --yes-bg: #EBF5EE; --yes-border: #1F8A4C;
+    --no-bg: #FDF2F1; --no-border: #B0413E;
+    --c-A: #D33A2C; --c-L: #7C4BB3; --c-P: #2B6FD0;
+    --c-R: #1F8A4C; --c-I: #9A7A1C; --c-M: #7A3F1D;
   }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .container {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Source Sans 3',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; -webkit-font-smoothing:antialiased; }
+  .container { max-width:680px; margin:0 auto; padding:40px 24px 80px; }
 
   /* INTRO */
-  .intro {
-    text-align: center;
-    margin-bottom: 48px;
-    animation: fadeIn 0.6s ease;
-  }
-
-  .intro-eyebrow {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 16px;
-  }
-
-  .intro h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 32px;
-    font-weight: 400;
-    line-height: 1.25;
-    color: var(--text);
-    margin-bottom: 16px;
-  }
-
-  .intro p {
-    font-size: 17px;
-    color: var(--text-light);
-    max-width: 520px;
-    margin: 0 auto 32px;
-    font-weight: 300;
-    line-height: 1.65;
-  }
-
-  .intro .note {
-    font-size: 14px;
-    color: var(--text-light);
-    font-style: italic;
-    max-width: 460px;
-    margin: 0 auto;
-    opacity: 0.8;
-  }
-
-  .btn-start {
-    display: inline-block;
-    padding: 14px 40px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    letter-spacing: 0.3px;
-    margin-bottom: 20px;
-  }
-
-  .btn-start:hover {
-    background: #2C4A65;
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-hover);
-  }
+  .intro { text-align:center; animation:fadeIn .6s ease; }
+  .intro-eyebrow { font-size:12px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; }
+  .intro h1 { font-family:'DM Serif Display',serif; font-size:30px; font-weight:400; line-height:1.25; margin-bottom:16px; }
+  .intro p { font-size:16px; color:var(--text-light); max-width:540px; margin:0 auto 24px; font-weight:300; line-height:1.65; }
+  .btn-primary { display:inline-block; padding:14px 40px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius); font-family:'Source Sans 3',sans-serif; font-size:16px; font-weight:500; cursor:pointer; transition:all .25s ease; margin-bottom:20px; }
+  .btn-primary:hover { background:#2C4A65; transform:translateY(-1px); box-shadow:var(--shadow-hover); }
 
   /* PROGRESS */
-  .progress-bar {
-    width: 100%;
-    height: 3px;
-    background: var(--border);
-    border-radius: 3px;
-    margin-bottom: 40px;
-    overflow: hidden;
-  }
+  .progress-bar { width:100%; height:3px; background:var(--border); border-radius:3px; margin-bottom:24px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--accent); border-radius:3px; transition:width .5s ease; }
 
-  .progress-fill {
-    height: 100%;
-    background: var(--accent);
-    border-radius: 3px;
-    transition: width 0.5s ease;
-  }
+  /* PHASE INSTRUCTIONS */
+  .phase-block { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:20px 24px; margin-bottom:20px; box-shadow:var(--shadow); }
+  .phase-block .phase-title { font-size:16px; margin-bottom:6px; color:var(--text); font-weight:500; }
+  .phase-block .phase-desc { font-size:16px; color:var(--text); line-height:1.55; font-weight:400; }
 
-  .progress-label {
-    font-size: 13px;
-    color: var(--text-light);
-    margin-bottom: 8px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-  }
+  /* SORT CARD */
+  .sort-card { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:32px 28px; text-align:center; box-shadow:var(--shadow); margin-bottom:16px; animation:slideUp .3s ease; }
+  .sort-card .statement { font-size:17px; line-height:1.55; color:var(--text); margin-bottom:24px; font-weight:400; }
+  .sort-buttons { display:flex; gap:16px; justify-content:center; }
+  .btn-sort { padding:12px 20px; border-radius:var(--radius); font-family:'Source Sans 3',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all .2s ease; border:1.5px solid; }
+  .btn-like { background:var(--yes-bg); border-color:var(--yes-border); color:var(--yes-border); }
+  .btn-like:hover { background:var(--yes-border); color:#fff; }
+  .btn-unlike { background:var(--no-bg); border-color:var(--no-border); color:var(--no-border); }
+  .btn-unlike:hover { background:var(--no-border); color:#fff; }
+  .sort-counter { font-size:13px; color:var(--text-light); text-align:center; }
 
-  /* SCENARIO CARD */
-  .scenario {
-    animation: slideUp 0.4s ease;
-  }
-
-  .scenario-context {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 12px;
-  }
-
-  .scenario-text {
-    font-family: 'DM Serif Display', serif;
-    font-size: 22px;
-    line-height: 1.4;
-    color: var(--text);
-    margin-bottom: 10px;
-    font-weight: 400;
-  }
-
-  .scenario-subtext {
-    font-size: 15px;
-    color: var(--text-light);
-    margin-bottom: 32px;
-    font-weight: 300;
-    line-height: 1.55;
-  }
-
-  .scenario-prompt {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 16px;
-  }
-
-  /* OPTIONS */
-  .options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .option {
-    padding: 16px 20px;
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    font-size: 15px;
-    line-height: 1.5;
-    color: var(--text);
-    font-weight: 400;
-    position: relative;
-  }
-
-  .option:hover {
-    border-color: var(--accent);
-    background: var(--hover);
-    transform: translateX(3px);
-  }
-
-  .option.selected {
-    border-color: var(--selected);
-    background: var(--selected-bg);
-    font-weight: 500;
-  }
-
-  .option.selected::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 3px;
-    background: var(--accent);
-    border-radius: 3px 0 0 3px;
-  }
-
-  /* NAVIGATION */
-  .nav {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 32px;
-    gap: 12px;
-  }
-
-  .btn-next {
-    padding: 12px 32px;
-    background: var(--accent);
-    color: white;
-    border: none;
-    border-radius: var(--radius);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    opacity: 0.4;
-    pointer-events: none;
-  }
-
-  .btn-next.active {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  .btn-next.active:hover {
-    background: #2C4A65;
-    transform: translateY(-1px);
-  }
+  /* RANK / ENGAGEMENT OPTIONS */
+  .rank-options { display:flex; flex-direction:column; gap:10px; }
+  .rank-option { padding:16px 20px; background:var(--card-bg); border:1.5px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:all .2s ease; font-size:15px; line-height:1.5; color:var(--text); }
+  .rank-option:hover { border-color:var(--accent); background:var(--hover); transform:translateX(3px); }
+  .engage-label { font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-light); margin-bottom:4px; }
 
   /* RESULTS */
-  .results {
-    animation: fadeIn 0.6s ease;
-  }
+  .results { animation:fadeIn .6s ease; }
+  .results-header { text-align:center; margin-bottom:32px; }
+  .results-header h2 { font-family:'DM Serif Display',serif; font-size:28px; font-weight:400; margin-bottom:12px; }
+  .results-header p { font-size:16px; color:var(--text-light); font-weight:300; line-height:1.6; max-width:500px; margin:0 auto; }
 
-  .results-header {
-    text-align: center;
-    margin-bottom: 40px;
-  }
+  .result-card { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:36px 32px; margin-bottom:24px; box-shadow:var(--shadow); text-align:center; }
 
-  .results-header h2 {
-    font-family: 'DM Serif Display', serif;
-    font-size: 28px;
-    font-weight: 400;
-    color: var(--text);
-    margin-bottom: 12px;
-  }
+  /* Badge */
+  .badge-section { display:flex; flex-direction:column; align-items:center; margin-bottom:24px; }
+  .badge-hex { position:relative; width:240px; height:276px; display:flex; align-items:center; justify-content:center; }
+  .badge-hex svg { position:absolute; top:0; left:0; width:100%; height:100%; }
+  .badge-content { position:relative; z-index:1; text-align:center; padding:0 16px; }
+  .badge-pre-top { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; opacity:.7; }
+  .badge-pre-main { font-family:'DM Serif Display',serif; font-size:18px; margin:2px 0 4px; }
+  .badge-pre-bot { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; opacity:.7; }
+  .badge-code { font-family:'DM Serif Display',serif; font-size:44px; letter-spacing:5px; line-height:1.2; margin-top:6px; }
+  .badge-arc-stack { margin-top:12px; text-align:center; line-height:1.8; font-size:15px; font-weight:500; }
+  .badge-url { font-family:'DM Serif Display',serif; font-size:15px; color:var(--accent); margin-top:10px; }
 
-  .results-header p {
-    font-size: 16px;
-    color: var(--text-light);
-    font-weight: 300;
-    line-height: 1.6;
-    max-width: 500px;
-    margin: 0 auto;
-  }
+  .pattern-desc { font-size:16px; line-height:1.65; color:var(--text); margin:20px 0; text-align:left; }
+  .pattern-desc em { font-style:normal; font-weight:600; }
 
-  .pattern-display {
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 32px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow);
-  }
+  .instinct-bars { display:flex; flex-direction:column; gap:12px; margin:24px 0; }
+  .instinct-row { display:flex; align-items:center; gap:12px; }
+  .instinct-label { font-size:13px; font-weight:600; width:100px; text-align:right; }
+  .instinct-track { flex:1; height:8px; background:var(--accent-light); border-radius:8px; overflow:hidden; }
+  .instinct-fill { height:100%; border-radius:8px; transition:width 1s ease; width:0; }
 
-  .pattern-observation {
-    font-size: 17px;
-    line-height: 1.65;
-    color: var(--text);
-    margin-bottom: 24px;
-    font-weight: 400;
-  }
+  .engage-result { margin-top:20px; padding-top:20px; border-top:1px solid var(--border); text-align:left; }
+  .engage-result-label { font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
 
-  .pattern-observation em {
-    font-style: normal;
-    font-weight: 600;
-    color: var(--accent);
-  }
+  .influencer-note { margin-top:16px; padding:14px 18px; background:#FFFBF0; border:1px solid #E8DFC0; border-radius:var(--radius); font-size:14px; line-height:1.55; text-align:left; }
 
-  .instinct-bars {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 28px;
-  }
+  /* Actions */
+  .actions { display:flex; gap:12px; justify-content:center; margin:24px 0; flex-wrap:wrap; }
+  .btn-action { padding:10px 24px; border-radius:var(--radius); font-family:'Source Sans 3',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all .2s ease; border:1.5px solid var(--accent); color:var(--accent); background:transparent; }
+  .btn-action:hover { background:var(--accent); color:#fff; }
+  .btn-action.copied { background:var(--yes-border); border-color:var(--yes-border); color:#fff; }
 
-  .instinct-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .cta-section { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:28px; text-align:center; box-shadow:var(--shadow); }
+  .cta-section p { font-size:15px; color:var(--text); line-height:1.6; margin-bottom:8px; }
+  .cta-subtle { font-size:14px; color:var(--text-light); font-weight:300; font-style:italic; }
 
-  .instinct-label {
-    font-size: 13px;
-    font-weight: 600;
-    width: 100px;
-    text-align: right;
-    color: var(--text-light);
-    letter-spacing: 0.3px;
-  }
+  .divider { width:40px; height:1.5px; background:var(--border); margin:32px auto; }
 
-  .instinct-track {
-    flex: 1;
-    height: 8px;
-    background: var(--accent-light);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .instinct-fill {
-    height: 100%;
-    border-radius: 8px;
-    transition: width 1s ease;
-    width: 0;
-  }
-
-  .instinct-count {
-    font-size: 13px;
-    color: var(--text-light);
-    width: 24px;
-  }
-
-  .top-pattern {
-    margin-top: 28px;
-    padding-top: 24px;
-    border-top: 1px solid var(--border);
-  }
-
-  .top-pattern-label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-
-  .top-pattern-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 24px;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-
-  .top-pattern-desc {
-    font-size: 15px;
-    color: var(--text-light);
-    line-height: 1.6;
-    font-weight: 300;
-  }
-
-  /* CTA */
-  .cta-section {
-    background: var(--card-bg);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 32px;
-    text-align: center;
-    box-shadow: var(--shadow);
-  }
-
-  .cta-section p {
-    font-size: 16px;
-    color: var(--text);
-    line-height: 1.6;
-    margin-bottom: 8px;
-  }
-
-  .cta-section .cta-subtle {
-    font-size: 14px;
-    color: var(--text-light);
-    font-weight: 300;
-    font-style: italic;
-  }
-
-  .divider {
-    width: 40px;
-    height: 1.5px;
-    background: var(--border);
-    margin: 40px auto;
-  }
-
-  /* BADGE */
-  .badge-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 36px 0;
-  }
-
-  .badge-hexagon {
-    position: relative;
-    width: 208px;
-    height: 240px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .badge-hexagon svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .badge-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 0 20px;
-  }
-
-  .badge-label {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .badge-name {
-    font-family: 'DM Serif Display', serif;
-    font-size: 28px;
-    font-weight: 400;
-    line-height: 1.2;
-  }
-
-  .badge-tendency {
-    font-size: 16px;
-    color: var(--text);
-    font-weight: 400;
-    margin-top: 14px;
-    max-width: 380px;
-    text-align: center;
-    line-height: 1.5;
-  }
-
-  .badge-tendency em {
-    font-style: normal;
-    font-weight: 600;
-    color: var(--accent);
-  }
-
-  .badge-share-hint {
-    font-size: 12px;
-    color: var(--text-light);
-    margin-top: 16px;
-    opacity: 0.6;
-    letter-spacing: 0.3px;
-  }
-
-  .badge-footer {
-    font-family: 'DM Serif Display', serif;
-    font-size: 15px;
-    color: var(--accent);
-    margin-top: 12px;
-    letter-spacing: 0.5px;
-    font-weight: 400;
-  }
-
-  /* ANIMATIONS */
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .hidden { display: none; }
-
-  /* Responsive */
-  @media (max-width: 600px) {
-    .container { padding: 28px 16px 60px; }
-    .intro h1 { font-size: 26px; }
-    .scenario-text { font-size: 19px; }
-    .results-header h2 { font-size: 24px; }
-    .instinct-label { width: 80px; font-size: 12px; }
-  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  .hidden { display:none; }
+  @media(max-width:600px) { .container{padding:28px 16px 60px} .intro h1{font-size:24px} .badge-code{font-size:28px} .instinct-label{width:80px;font-size:12px} }
 </style>
 </head>
 <body>
-
 <div class="container">
-  <!-- INTRO SCREEN -->
   <div id="intro" class="intro">
     <div class="intro-eyebrow">The Pattern Lab</div>
-    <h1>What Do You Reach For First?</h1>
-    <p>Eight situations. Each one has several reasonable responses. Pick the one that's most <em>you</em> — not the one that sounds best, but the one where your energy actually goes.</p>
-    <button class="btn-start" onclick="startScenarios()">Begin</button>
-    <p class="note">There are no right answers. Every option is something a capable person would do. The question is which one you can't help doing.</p>
+    <h1>Find Your Instinctive Pattern</h1>
+    <p>Eighteen statements about how people respond to change. You'll sort them quickly, then rank what's left. After that, eight short questions about how you prefer to work. The whole thing takes about five minutes and produces a personal pattern code.</p>
+    <button class="btn-primary" onclick="startPhase1()">Begin</button>
+    <p style="font-size:14px;color:var(--text-light);font-style:italic;max-width:460px;margin:0 auto;opacity:.8;">Every statement describes something a capable person genuinely does. The question is which ones you do readily — without needing a reason.</p>
   </div>
-
-  <!-- SCENARIO SCREEN -->
-  <div id="scenario-screen" class="hidden">
-    <div class="progress-label" id="progress-label"></div>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progress-fill"></div>
-    </div>
-    <div class="scenario" id="scenario-container"></div>
-    <div class="nav">
-      <button class="btn-next" id="btn-next" onclick="nextScenario()">Continue</button>
-    </div>
-  </div>
-
-  <!-- RESULTS SCREEN -->
+  <div id="phase1-screen" class="hidden"></div>
+  <div id="phase2-screen" class="hidden"></div>
+  <div id="phase3-screen" class="hidden"></div>
   <div id="results-screen" class="hidden"></div>
 </div>
 
 <script>
-const scenarios = [
-  // --- TRIGGER SCENARIOS (1-3): where does your mind go first? ---
-  {
-    context: "Scenario 1",
-    text: "You open your laptop to find an urgent message: something you depend on has changed without warning.",
-    subtext: "You weren't consulted. You don't yet know the full implications.",
-    prompt: "In the first few seconds, before you've thought it through — where does your mind go?",
-    options: [
-      { text: "To what's actually happened — you need the facts before you react", instinct: "A" },
-      { text: "To what this means — you're already connecting it to a bigger picture", instinct: "L" },
-      { text: "To what could be done differently now — new constraints create new options", instinct: "P" },
-      { text: "To what you're going to do about it — you need a clear response, decided", instinct: "R" },
-      { text: "To the most immediate practical thing — the path forward is obvious, now execute", instinct: "I" },
-      { text: "To what this puts at risk — something that was running well may now be compromised", instinct: "M" }
-    ]
-  },
-  {
-    context: "Scenario 2",
-    text: "You come across an idea that excites you — but it isn't fully formed.",
-    subtext: "Something you've read, heard, or thought of yourself. It has potential but also obvious gaps.",
-    prompt: "What's your immediate, unfiltered reaction?",
-    options: [
-      { text: "How do I know this is sound? You want to test it against what you already know to be true", instinct: "A" },
-      { text: "What does this connect to? You're already seeing how it fits into or explains something larger", instinct: "L" },
-      { text: "What could this become? You're already shaping it, extending it, making it more", instinct: "P" },
-      { text: "Is this the one? You want to decide whether to commit to it or set it aside", instinct: "R" },
-      { text: "The idea is good enough — time to put it into practice and see what happens", instinct: "I" },
-      { text: "How does this fit with what's already in place? Good ideas need to work with what exists", instinct: "M" }
-    ]
-  },
-  {
-    context: "Scenario 3",
-    text: "A plan you've been relying on suddenly falls through.",
-    subtext: "The path you were on is no longer available. Nothing about the goal has changed — just the route.",
-    prompt: "What fires first in your mind?",
-    options: [
-      { text: "What's really happened here? Is this gone temporarily or permanently — you need to know before reacting", instinct: "A" },
-      { text: "What does this tell you about the whole situation? The disruption might reveal something important", instinct: "L" },
-      { text: "There could be another way — surely there's an approach that nobody's seen yet", instinct: "P" },
-      { text: "Which alternative are you going with? You want to commit to a new path now", instinct: "R" },
-      { text: "You already know a workable alternative — time to get started on it", instinct: "I" },
-      { text: "What's still intact? You want to stabilise what's working before changing anything else", instinct: "M" }
-    ]
-  },
-  // --- DRIVER SCENARIOS (4-6): where does your sustained energy go? ---
-  {
-    context: "Scenario 4",
-    text: "You've been working on something for weeks. Progress is slow but you keep coming back to it.",
-    subtext: "Nobody is making you do this. Something in it has your attention and won't let go.",
-    prompt: "What is it about this work that keeps pulling you back?",
-    options: [
-      { text: "There's something in the data that doesn't add up — you can feel the discrepancy even if you can't yet name it", instinct: "A" },
-      { text: "You can feel a deeper understanding forming — the full picture isn't visible yet but each session brings it closer", instinct: "L" },
-      { text: "You're sure there's a way to crack this open — the right approach exists, you just haven't found it yet", instinct: "P" },
-      { text: "There's a commitment you need to make and you won't rest until you're certain it's the right one", instinct: "R" },
-      { text: "The way forward was decided weeks ago and you're executing it — each session is about making the next concrete thing happen", instinct: "I" },
-      { text: "It needs consistent, careful attention to work — and you're the one keeping it on track", instinct: "M" }
-    ]
-  },
-  {
-    context: "Scenario 5",
-    text: "You have an uninterrupted day with nothing scheduled.",
-    subtext: "No obligations, no deadlines. Just you and your time.",
-    prompt: "What do you find yourself spending the most time on?",
-    options: [
-      { text: "Going deep into something — satisfying a question by finding out what's really true", instinct: "A" },
-      { text: "Thinking — letting your mind follow threads, seeing what becomes clear when there's space", instinct: "L" },
-      { text: "Working on a possibility — shaping something that could exist but doesn't yet", instinct: "P" },
-      { text: "Taking a good look at the options ahead of you, weighing them up, and making some decisions", instinct: "R" },
-      { text: "Acting on plans already made — you've got things decided and now you can finally do them", instinct: "I" },
-      { text: "Tending — the house, the garden, the accounts, the ongoing things that keep life running well", instinct: "M" }
-    ]
-  },
-  {
-    context: "Scenario 6",
-    text: "You've agreed to help someone with a problem that matters to them.",
-    subtext: "You've said yes. You're on your own, figuring out how to be useful.",
-    prompt: "Where does most of your energy go?",
-    options: [
-      { text: "Into finding out what's actually going on — their version may not be the full picture", instinct: "A" },
-      { text: "Into understanding the real shape of the problem — it's probably deeper than they think", instinct: "L" },
-      { text: "Into seeing a better way forward for them — there are options they haven't considered", instinct: "P" },
-      { text: "Into helping them decide — they need to commit to a course of action, not keep circling", instinct: "R" },
-      { text: "Into getting the practical things moving — once they've chosen a direction, you make it happen", instinct: "I" },
-      { text: "Into making sure the basics are steady — whatever they do next, the foundations need to hold", instinct: "M" }
-    ]
-  },
-  // --- ARC SCENARIOS (7-8): the pattern across time ---
-  {
-    context: "Scenario 7",
-    text: "Think of a period when you felt most like yourself.",
-    subtext: "Not necessarily the happiest time. The time when what you were doing felt natural and unstrained.",
-    prompt: "What were you mostly occupied with?",
-    options: [
-      { text: "Establishing what was true — investigating, questioning, stripping away what didn't hold up", instinct: "A" },
-      { text: "Making sense of things — understanding what others found confusing, and sharing that understanding", instinct: "L" },
-      { text: "Seeing ways forward — generating possibilities, approaches, or angles that others hadn't considered", instinct: "P" },
-      { text: "Bringing resolution — situations needed a definite direction, and you provided it", instinct: "R" },
-      { text: "Delivering — commitments had been made and you were the one turning them into reality", instinct: "I" },
-      { text: "Sustaining — keeping important things running, tended, and looked after over time", instinct: "M" }
-    ]
-  },
-  {
-    context: "Scenario 8",
-    text: "Think about the work you keep volunteering for — the kind you take on even when nobody asks.",
-    subtext: "Not what you're paid to do. What you can't seem to stop doing.",
-    prompt: "What part of it is it that you can't leave alone?",
-    options: [
-      { text: "The checking — you keep going back to test whether something is really as it appears", instinct: "A" },
-      { text: "The understanding — you keep turning it over in your mind until the full meaning is clear", instinct: "L" },
-      { text: "The imagining — you keep seeing new angles, new ways it could go, new possibilities forming", instinct: "P" },
-      { text: "The choosing — you keep circling back to the decision point, refining which direction is right", instinct: "R" },
-      { text: "The doing — commitments have been made and you keep pushing to get the next piece delivered", instinct: "I" },
-      { text: "The tending — you keep making sure the existing pieces are running, connected, and looked after", instinct: "M" }
-    ]
-  }
+// === DATA ===
+const statements = [
+  { id:"A1", instinct:"A", text:"I check whether the information I have is true or accurate." },
+  { id:"A2", instinct:"A", text:"I ask questions until I'm certain I have the full story." },
+  { id:"A3", instinct:"A", text:"I examine the details to make sure everything adds up." },
+  { id:"L1", instinct:"L", text:"I think about what I'm really facing." },
+  { id:"L2", instinct:"L", text:"I take a look at the bigger picture." },
+  { id:"L3", instinct:"L", text:"I assess the consequences of stepping in." },
+  { id:"P1", instinct:"P", text:"I imagine how things could be changed." },
+  { id:"P2", instinct:"P", text:"I respond with some ideas on how to handle things." },
+  { id:"P3", instinct:"P", text:"I outline an approach that should work." },
+  { id:"R1", instinct:"R", text:"I toss an imaginary coin and follow my gut reaction." },
+  { id:"R2", instinct:"R", text:"I weigh the alternatives carefully before committing myself." },
+  { id:"R3", instinct:"R", text:"If I see a new path open, I'll commit to it before the opportunity closes." },
+  { id:"I1", instinct:"I", text:"I use some resources and build while I have the chance." },
+  { id:"I2", instinct:"I", text:"When one path closes, another opens. I'll find it and take it." },
+  { id:"I3", instinct:"I", text:"I seize the opportunity to make headway somewhere else." },
+  { id:"M1", instinct:"M", text:"I stick with tried and true routines." },
+  { id:"M2", instinct:"M", text:"I adjust course if needed; I need to finish what's been started." },
+  { id:"M3", instinct:"M", text:"I stay on task and ignore the distractions." }
 ];
 
-const instinctData = {
-  A: { 
-    name: "Verifying", 
-    fullName: "Authenticating",
-    color: "var(--c-authenticating)",
-    rawColor: "#D33A2C",
-    tendency: "test what's actually true before acting on it",
-    desc: "Your instinctive energy goes to accuracy. You need to know the ground is solid before you move. This isn't hesitation — it's a refusal to operate from assumption."
-  },
-  L: { 
-    name: "Illuminating", 
-    fullName: "Luminating",
-    color: "var(--c-luminating)",
-    rawColor: "#7C4BB3",
-    tendency: "make sense of things until the whole picture becomes visible",
-    desc: "Your instinctive energy goes to meaning. You need to understand what something signifies before engaging with it. This isn't overthinking — it's the need to see clearly before choosing."
-  },
-  P: { 
-    name: "Ideating", 
-    fullName: "Proposing",
-    color: "var(--c-proposing)",
-    rawColor: "#2B6FD0",
-    tendency: "see ways forward that others haven't considered",
-    desc: "Your instinctive energy goes to possibility. You notice what could be different, better, or not yet imagined. This isn't dreaming — it's a compulsion to find the approach nobody else has seen."
-  },
-  R: { 
-    name: "Committing", 
-    fullName: "Resolving",
-    color: "var(--c-resolving)",
-    rawColor: "#1F8A4C",
-    tendency: "resolve uncertainty into a definite direction",
-    desc: "Your instinctive energy goes to resolution. You want ambiguity converted into a clear path. This isn't impatience — it's the need to know where things stand so movement can begin."
-  },
-  I: { 
-    name: "Starting", 
-    fullName: "Initiating",
-    color: "var(--c-initiating)",
-    rawColor: "#9A7A1C",
-    tendency: "turn decided plans into tangible reality",
-    desc: "Your instinctive energy goes to execution. Once a course is set, you make it physical. This isn't restlessness — it's the need to convert agreement into concrete momentum."
-  },
-  M: { 
-    name: "Shepherding", 
-    fullName: "Maintaining",
-    color: "var(--c-maintaining)",
-    rawColor: "#7A3F1D",
-    tendency: "keep what matters steady, tended, and looked after",
-    desc: "Your instinctive energy goes to continuity. You notice what needs attention and provide it. This isn't resistance to change — it's the need to protect what works from being lost in the rush."
-  }
+const engageQuestions = [
+  { context:"When something needs doing and you're free to choose how...",
+    options:[
+      {text:"I handle it myself with what I have.", style:"S"},
+      {text:"I encourage someone capable to take it on.", style:"T"},
+      {text:"I get together with others and we work it out.", style:"C"}
+    ]},
+  { context:"When progress stalls...",
+    options:[
+      {text:"I dig in and push through on my own.", style:"S"},
+      {text:"I motivate others to keep going — remind them why it matters.", style:"T"},
+      {text:"I call people together to find a way through collectively.", style:"C"}
+    ]},
+  { context:"When a problem needs solving...",
+    options:[
+      {text:"I think it through privately until I see a way.", style:"S"},
+      {text:"I share my thinking with someone and persuade them to act on it.", style:"T"},
+      {text:"I work through it with others, combining what we each bring.", style:"C"}
+    ]},
+  { context:"When something important needs protecting...",
+    options:[
+      {text:"I take personal responsibility for it.", style:"S"},
+      {text:"I make sure someone understands what's at stake and backs it.", style:"T"},
+      {text:"I rally shared ownership so we all look after it.", style:"C"}
+    ]},
+  { context:"When a new direction becomes clear...",
+    options:[
+      {text:"I start acting on it immediately, using my own resources.", style:"S"},
+      {text:"I inspire others to see the possibility and get behind it.", style:"T"},
+      {text:"I bring people together to move on it as a group.", style:"C"}
+    ]},
+  { context:"When standards are slipping...",
+    options:[
+      {text:"I quietly raise my own effort to compensate.", style:"S"},
+      {text:"I champion what good looks like so others raise their game.", style:"T"},
+      {text:"I raise it with the group so we address it together.", style:"C"}
+    ]},
+  { context:"When there's an opportunity worth pursuing...",
+    options:[
+      {text:"I go after it independently.", style:"S"},
+      {text:"I talk someone into going for it if I think it would suit them.", style:"T"},
+      {text:"I propose we pursue it together.", style:"C"}
+    ]},
+  { context:"When something needs to be communicated...",
+    options:[
+      {text:"I work it out in my own head first.", style:"S"},
+      {text:"I find the right person and help them see what I see.", style:"T"},
+      {text:"I open a conversation so we arrive at shared understanding.", style:"C"}
+    ]}
+];
+
+const cycle = ['A','L','P','R','I','M'];
+const instinctMeta = {
+  A:{name:"Verifying",color:"#D33A2C"},
+  L:{name:"Illuminating",color:"#7C4BB3"},
+  P:{name:"Ideating",color:"#2B6FD0"},
+  R:{name:"Committing",color:"#1F8A4C"},
+  I:{name:"Starting",color:"#9A7A1C"},
+  M:{name:"Shepherding",color:"#7A3F1D"}
+};
+const tendencies = {
+  A:"test what's actually true before acting on it",
+  L:"make sense of things until the whole picture becomes visible",
+  P:"see ways forward that others haven't considered",
+  R:"resolve uncertainty into a definite direction",
+  I:"turn decided plans into tangible reality",
+  M:"keep what matters steady, tended, and looked after"
 };
 
-// The cycle: A-L-P-R-I-M (wraps around)
-const cycle = ['A', 'L', 'P', 'R', 'I', 'M'];
+// === STATE ===
+let shuffled=[], sortIdx=0, liked=[];
+let remaining=[], removed=[], ranked=[];
+let engageIdx=0, engageStep=0, engageScores={S:0,T:0,C:0}, engageCurrent=[], engageRankings=[];
+const focusWeights = [16,13,11,9,8,7,6,5];
 
-// Calculate forward distance on cycle (trigger to driver)
-function cycleDistance(from, to) {
-  const fi = cycle.indexOf(from);
-  const ti = cycle.indexOf(to);
-  return (ti - fi + 6) % 6;
+// === PHASE 1: SORT ===
+// sortMode: 'discard' = first pass removing rarely done, 'rescue' = reviewing discards to add more, 'narrow' = reviewing keeps to remove more
+let sortMode='discard', discarded=[];
+
+function startPhase1(){
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('phase1-screen').classList.remove('hidden');
+  shuffled=[...statements].sort(()=>Math.random()-.5);
+  sortIdx=0; liked=[]; discarded=[]; sortMode='discard';
+  renderSort();
 }
 
-// Get the instincts included in an arc from trigger to driver (forward on cycle)
-function getArcInstincts(trigger, driver) {
-  const fi = cycle.indexOf(trigger);
-  const ti = cycle.indexOf(driver);
-  const dist = (ti - fi + 6) % 6;
-  const arc = [];
-  for (let step = 0; step <= dist; step++) {
-    arc.push(cycle[(fi + step) % 6]);
+function renderSort(){
+  const s=document.getElementById('phase1-screen');
+  
+  // Check if we've hit 9
+  if(liked.length===9){ startPhase2(); return; }
+  // Check if we've run out of cards
+  if(sortIdx>=shuffled.length){ handlePassComplete(); return; }
+  
+  const st=shuffled[sortIdx], total=shuffled.length;
+  
+  let instructionTitle, instructionDesc, instructionColor;
+  if(sortMode==='discard'){
+    instructionTitle="Each statement describes things you probably do. You might do them readily. You might do them rarely.";
+    instructionDesc="Discard the things you do rarely. Keep the things you do readily.";
+    instructionColor='var(--text)';
+  } else if(sortMode==='rescue'){
+    const need=9-liked.length;
+    instructionTitle=`You kept ${liked.length} — we need ${need} more to reach 9.`;
+    instructionDesc="Here are the ones you discarded. Some might be things you do more readily than you first thought.";
+    instructionColor='var(--yes-border)';
+  } else if(sortMode==='narrow'){
+    const excess=liked.length + (total-sortIdx) - 9;
+    instructionTitle=`You've kept too many — we need to get down to 9.`;
+    instructionDesc=`Discard the ones you do least readily. We'll stop as soon as you have 9.`;
+    instructionColor='var(--no-border)';
   }
+  
+  s.innerHTML=`
+    <div class="phase-block" style="border-color:${instructionColor}22;">
+      <div class="phase-title" style="color:${instructionColor}">${instructionTitle}</div>
+      <div class="phase-desc">${instructionDesc}</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${(sortIdx/total)*100}%"></div></div>
+    <div class="sort-card">
+      <div style="font-size:14px;color:var(--accent);margin-bottom:12px;font-weight:500;">When circumstances produce change, what do you do?</div>
+      <div class="statement">"${st.text}"</div>
+      <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Go with your first reaction.</div>
+      <div class="sort-buttons">
+        <button class="btn-sort btn-unlike" onclick="sortResp(false)">I rarely do this — Discard</button>
+        <button class="btn-sort btn-like" onclick="sortResp(true)">I readily do this — Keep</button>
+      </div>
+    </div>
+    <div class="sort-counter">${liked.length} kept · need 9</div>`;
+}
+
+function sortResp(yes){
+  const st=shuffled[sortIdx];
+  if(yes){
+    liked.push(st);
+  } else {
+    if(sortMode==='discard') discarded.push(st);
+  }
+  sortIdx++;
+  
+  // Immediate check — have we hit 9?
+  if(liked.length===9){ startPhase2(); return; }
+  
+  renderSort();
+}
+
+function handlePassComplete(){
+  if(liked.length===9){ startPhase2(); return; }
+  
+  if(liked.length<9){
+    // Need more — show discarded ones for rescue
+    sortMode='rescue';
+    shuffled=[...discarded].sort(()=>Math.random()-.5);
+    discarded=[];
+    sortIdx=0;
+    document.getElementById('phase1-screen').innerHTML=`
+      <div class="phase-block" style="border-color:var(--yes-border)22;">
+        <div class="phase-title" style="color:var(--yes-border)">You kept ${liked.length} — we need at least 9.</div>
+        <div class="phase-desc">Let's go through the ones you discarded. Keep a few more — we'll stop as soon as you reach 9.</div>
+      </div>
+      <button class="btn-primary" onclick="renderSort()" style="margin-top:16px">Continue</button>`;
+    return;
+  }
+  
+  if(liked.length>9){
+    // Need fewer — show kept ones for narrowing
+    sortMode='narrow';
+    const keptCount=liked.length;
+    shuffled=[...liked].sort(()=>Math.random()-.5);
+    liked=[];
+    sortIdx=0;
+    document.getElementById('phase1-screen').innerHTML=`
+      <div class="phase-block" style="border-color:var(--no-border)22;">
+        <div class="phase-title" style="color:var(--no-border)">You kept ${keptCount} — we need to narrow to 9.</div>
+        <div class="phase-desc">You'll see your kept statements again. Discard the ones you do least readily. We'll stop as soon as you reach 9.</div>
+      </div>
+      <button class="btn-primary" onclick="renderSort()" style="margin-top:16px">Continue</button>`;
+    return;
+  }
+}
+
+// === PHASE 2: REVERSE RANK ===
+function startPhase2(){
+  document.getElementById('phase1-screen').classList.add('hidden');
+  document.getElementById('phase2-screen').classList.remove('hidden');
+  remaining=[...liked].sort(()=>Math.random()-.5);
+  removed=[]; ranked=[];
+  startRanking();
+}
+
+function startRanking(){ removed=[]; renderRank(); }
+function renderRank(){
+  const s=document.getElementById('phase2-screen');
+  const rem=remaining.length, gone=removed.length, target=8;
+  if(gone>=target||rem<=1){ finaliseRank(); return; }
+  const prompt=gone===0?'Which of these do you do <span style="color:var(--no-border);font-weight:600;">least</span> readily?'
+    :rem>4?'Of the rest — which do you do <span style="color:var(--no-border);font-weight:600;">least</span>?'
+    :rem>2?'Getting closer — which is <span style="color:var(--no-border);font-weight:600;">next to go</span>?'
+    :'Last call — which of these two is <span style="color:var(--no-border);font-weight:600;">weaker</span>?';
+  s.innerHTML=`
+    <div class="phase-block">
+      <div class="phase-title" style="color:var(--no-border);">Rank by elimination — remove the weakest.</div>
+      <div class="phase-desc">${prompt} Tap it to remove. What remains reveals your pattern.</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${(gone/target)*100}%"></div></div>
+    <div class="sort-counter">${rem} remaining</div>
+    <div class="rank-options">${remaining.map((st,i)=>`
+      <div class="rank-option" onclick="removeWeakest(${i})">${st.text}</div>`).join('')}
+    </div>`;
+}
+function removeWeakest(i){
+  removed.push(remaining.splice(i,1)[0]);
+  renderRank();
+}
+function finaliseRank(){
+  ranked=[];
+  if(remaining.length===1) ranked.push(remaining[0]);
+  for(let i=removed.length-1;i>=0;i--) ranked.push(removed[i]);
+  startPhase3();
+}
+
+// === PHASE 3: ENGAGEMENT STYLE ===
+function startPhase3(){
+  document.getElementById('phase2-screen').classList.add('hidden');
+  document.getElementById('phase3-screen').classList.remove('hidden');
+  engageIdx=0; engageStep=0;
+  engageScores={S:0,T:0,C:0};
+  engageRankings=[];
+  showEngageIntro();
+}
+
+function showEngageIntro(){
+  document.getElementById('phase3-screen').innerHTML=`
+    <div class="phase-block">
+      <div class="phase-title" style="color:var(--accent);">Part Two: How do you prefer to act?</div>
+      <div class="phase-desc">You've identified what you instinctively do. Now we'll look at <em>how</em> you prefer to do it — on your own, through others, or together with others. Eight short questions, two choices each. This takes about a minute.</div>
+    </div>
+    <button class="btn-primary" onclick="renderEngage()" style="margin-top:16px">Continue</button>`;
+}
+
+function renderEngage(){
+  const s=document.getElementById('phase3-screen');
+  if(engageIdx>=engageQuestions.length){ showResults(); return; }
+  const q=engageQuestions[engageIdx];
+  if(engageStep===0){
+    engageCurrent=[...q.options].sort(()=>Math.random()-.5);
+  }
+  const prompt=engageStep===0
+    ?"Which of these three is most like you?"
+    :"And of these two?";
+  const qNum=engageIdx+1;
+  const qTotal=engageQuestions.length;
+  s.innerHTML=`
+    <div class="phase-block">
+      <div class="phase-title" style="color:var(--accent);">Engagement Style — Question ${qNum} of ${qTotal}</div>
+      <div class="phase-desc">Same situation, different approaches. Pick the one closest to how you'd actually do it.</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${(engageIdx/qTotal)*100}%"></div></div>
+    <div style="font-size:16px;color:var(--accent);margin-bottom:12px;font-weight:500;">${q.context}</div>
+    <div style="font-size:14px;color:var(--text-light);margin-bottom:12px;">${prompt}</div>
+    <div class="rank-options">${engageCurrent.map((o,i)=>`
+      <div class="rank-option" onclick="engagePick(${i})">${o.text}</div>`).join('')}
+    </div>`;
+}
+
+function engagePick(i){
+  if(engageStep===0){
+    // First pick = 3 points
+    engageScores[engageCurrent[i].style]+=3;
+    engageCurrent.splice(i,1);
+    engageStep=1;
+    renderEngage();
+  } else {
+    // Second pick = 2 points, remaining = 1 point
+    engageScores[engageCurrent[i].style]+=2;
+    const leftover=engageCurrent[1-i];
+    engageScores[leftover.style]+=1;
+    engageIdx++; engageStep=0;
+    renderEngage();
+  }
+}
+
+// === SCORING ===
+function cycDist(a,b){ return (cycle.indexOf(b)-cycle.indexOf(a)+6)%6; }
+function getArc(t,d){
+  const fi=cycle.indexOf(t), dist=cycDist(t,d), arc=[];
+  for(let s=0;s<=dist;s++) arc.push(cycle[(fi+s)%6]);
   return arc;
 }
 
-// For ambiguous pairs (3 steps either way), use remaining answers to disambiguate
-function resolveAmbiguousArc(instA, instB, tally) {
-  // Two possible arcs
-  const arcForward = getArcInstincts(instA, instB); // A as trigger, B as driver
-  const arcReverse = getArcInstincts(instB, instA); // B as trigger, A as driver
-  
-  // Count how many of the remaining answers fall within each arc
-  let forwardScore = 0;
-  let reverseScore = 0;
-  
-  for (const [inst, count] of Object.entries(tally)) {
-    if (inst === instA || inst === instB) continue;
-    if (arcForward.includes(inst)) forwardScore += count;
-    if (arcReverse.includes(inst)) reverseScore += count;
+function scoreDrive(){
+  const scores={A:0,L:0,P:0,R:0,I:0,M:0};
+  const counts={A:0,L:0,P:0,R:0,I:0,M:0};
+  const positions={}; cycle.forEach(k=>positions[k]=[]);
+  const top3=[];
+  ranked.forEach((st,i)=>{
+    if(i<focusWeights.length){
+      scores[st.instinct]+=focusWeights[i];
+      counts[st.instinct]++;
+      positions[st.instinct].push(i+1);
+      if(i<3) top3.push(st.instinct);
+    }
+  });
+  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const pairs=Object.entries(counts).filter(([k,v])=>v>=2).map(([k])=>k);
+  const trios=Object.entries(counts).filter(([k,v])=>v>=3).map(([k])=>k);
+
+  let cap=null, influencers=[], ambiguous=false;
+
+  // Trio rule
+  if(trios.length>=1){
+    const tri=trios[0];
+    const otherPairs=pairs.filter(p=>p!==tri);
+    let otherTop4=false;
+    otherPairs.forEach(p=>{ if(positions[p].some(pos=>pos<=4)) otherTop4=true; });
+    if(otherPairs.length===0||!otherTop4){
+      cap={trigger:tri,driver:tri,arc:[tri]};
+    } else {
+      const os={...scores}; os[tri]=0;
+      const next=Object.entries(os).sort((a,b)=>b[1]-a[1])[0][0];
+      cap=resolveArc(next,tri,scores,true);
+    }
   }
-  
-  if (forwardScore > reverseScore) return { trigger: instA, driver: instB };
-  if (reverseScore > forwardScore) return { trigger: instB, driver: instA };
-  return null; // true tie — can't determine
-}
 
-let currentScenario = 0;
-let answers = [];
-
-function startScenarios() {
-  document.getElementById('intro').classList.add('hidden');
-  document.getElementById('scenario-screen').classList.remove('hidden');
-  renderScenario();
-}
-
-function renderScenario() {
-  const s = scenarios[currentScenario];
-  const total = scenarios.length;
-  
-  document.getElementById('progress-label').textContent = `${currentScenario + 1} of ${total}`;
-  document.getElementById('progress-fill').style.width = `${((currentScenario) / total) * 100}%`;
-  
-  // Shuffle options for this scenario
-  const shuffled = [...s.options].sort(() => Math.random() - 0.5);
-  
-  const container = document.getElementById('scenario-container');
-  container.innerHTML = `
-    <div class="scenario-context">${s.context}</div>
-    <div class="scenario-text">${s.text}</div>
-    <div class="scenario-subtext">${s.subtext}</div>
-    <div class="scenario-prompt">${s.prompt}</div>
-    <div class="options">
-      ${shuffled.map((opt, i) => `
-        <div class="option" onclick="selectOption(this, '${opt.instinct}')" data-instinct="${opt.instinct}">
-          ${opt.text}
-        </div>
-      `).join('')}
-    </div>
-  `;
-  
-  // Reset animation
-  container.style.animation = 'none';
-  container.offsetHeight;
-  container.style.animation = 'slideUp 0.4s ease';
-  
-  document.getElementById('btn-next').classList.remove('active');
-}
-
-function selectOption(el, instinct) {
-  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  answers[currentScenario] = instinct;
-  document.getElementById('btn-next').classList.add('active');
-}
-
-function nextScenario() {
-  if (!answers[currentScenario]) return;
-  
-  currentScenario++;
-  
-  if (currentScenario >= scenarios.length) {
-    showResults();
-  } else {
-    renderScenario();
+  // Two pairs
+  if(!cap&&pairs.length>=2){
+    const ps=pairs.sort((a,b)=>scores[b]-scores[a]);
+    cap=resolveArc(ps[0],ps[1],scores,false);
   }
+  // One pair + single
+  if(!cap&&pairs.length===1){
+    const p=pairs[0], best=sorted.find(([k])=>k!==p&&scores[k]>0);
+    if(best) cap=resolveArc(p,best[0],scores,false);
+  }
+  // Top two by score
+  if(!cap&&sorted[0][1]>0&&sorted[1][1]>0){
+    cap=resolveArc(sorted[0][0],sorted[1][0],scores,false);
+  }
+
+  if(cap&&cap.arc&&cap.arc.length>4){ ambiguous=true; cap=null; }
+
+  // Scattered top 3 check
+  const uTop3=[...new Set(top3)];
+  if(uTop3.length===3){
+    let contig=0;
+    for(let i=0;i<3;i++) for(let j=i+1;j<3;j++){
+      const d1=cycDist(uTop3[i],uTop3[j]), d2=cycDist(uTop3[j],uTop3[i]);
+      if(Math.min(d1,d2)<=2) contig++;
+    }
+    if(contig===0){ ambiguous=true; cap=null; }
+  }
+
+  // Influencers
+  if(cap) top3.forEach(inst=>{
+    if(!cap.arc.includes(inst)&&!influencers.includes(inst)) influencers.push(inst);
+  });
+
+  return {cap, ambiguous, influencers, scores, sorted, counts};
 }
 
-function showResults() {
-  document.getElementById('scenario-screen').classList.add('hidden');
-  
-  // Tally overall
-  const tally = { A: 0, L: 0, P: 0, R: 0, I: 0, M: 0 };
-  answers.forEach(a => tally[a]++);
-  
-  // Sort by count descending
-  const sorted = Object.entries(tally).sort((a, b) => b[1] - a[1]);
-  const top1 = sorted[0];
-  const top2 = sorted[1];
-  const topInstinct = instinctData[top1[0]];
-  const topCount = top1[1];
-  
-  // Determine arc
-  let arcResult = null;
-  let patternNote = '';
-  
-  if (top2[1] > 0 && top1[0] !== top2[0]) {
-    const instA = top1[0];
-    const instB = top2[0];
-    const distForward = cycleDistance(instA, instB);
-    const distReverse = cycleDistance(instB, instA);
-    
-    if (distForward <= 4 && distReverse <= 4) {
-      // Check if ambiguous (equidistant — both arcs are 3 steps)
-      if (distForward === 3 && distReverse === 3) {
-        // Ambiguous pair — use other answers to disambiguate
-        arcResult = resolveAmbiguousArc(instA, instB, tally);
-      } else if (distForward <= 4 && distForward <= distReverse) {
-        // instA triggers, instB drives (shorter forward path)
-        arcResult = { trigger: instA, driver: instB };
-      } else if (distReverse <= 4) {
-        // instB triggers, instA drives
-        arcResult = { trigger: instB, driver: instA };
+function resolveArc(a,b,scores,trioIsB){
+  if(a===b) return {trigger:a,driver:a,arc:[a]};
+  const df=cycDist(a,b), dr=cycDist(b,a);
+  if(df===3&&dr===3){
+    const arcAB=getArc(a,b), arcBA=getArc(b,a);
+    let sAB=0,sBA=0;
+    arcAB.forEach(k=>{if(k!==a&&k!==b) sAB+=scores[k];});
+    arcBA.forEach(k=>{if(k!==a&&k!==b) sBA+=scores[k];});
+    if(trioIsB) return {trigger:a,driver:b,arc:arcAB};
+    if(sAB>sBA) return {trigger:a,driver:b,arc:arcAB};
+    if(sBA>sAB) return {trigger:b,driver:a,arc:arcBA};
+    if(scores[b]>scores[a]) return {trigger:a,driver:b,arc:arcAB};
+    if(scores[a]>scores[b]) return {trigger:b,driver:a,arc:arcBA};
+    return {trigger:a,driver:b,arc:arcAB,ambiguousDirection:true};
+  }
+  if(df<=4&&df<=dr) return {trigger:a,driver:b,arc:getArc(a,b)};
+  if(dr<=4) return {trigger:b,driver:a,arc:getArc(b,a)};
+  return null;
+}
+
+function scoreEngage(){
+  const {S,T,C}=engageScores;
+  const total=S+T+C; // should be 48
+  const sorted=Object.entries(engageScores).sort((a,b)=>b[1]-a[1]);
+  const hi=sorted[0], mid=sorted[1], lo=sorted[2];
+
+  // Check balanced
+  if(hi[1]-lo[1]<=4) return {code:"BE",desc:"Balanced engagement — all three styles clearly present"};
+
+  // Check single dominance: top is 8+ above second
+  if(hi[1]-mid[1]>=8) return {code:hi[0]+hi[0],desc:`Strongly ${styleName(hi[0])} — the other styles rarely feature`};
+
+  // Two-style
+  return {code:hi[0]+mid[0],desc:`Primarily ${styleName(hi[0])}, secondarily ${styleName(mid[0])}`};
+}
+
+function styleName(code){
+  return {S:"solo",T:"tovenly",C:"collaborative"}[code];
+}
+
+// === RESULTS ===
+function showResults(){
+  document.getElementById('phase3-screen').classList.add('hidden');
+  const screen=document.getElementById('results-screen');
+  screen.classList.remove('hidden');
+
+  const drive=scoreDrive();
+  const engage=scoreEngage();
+  const cap=drive.cap;
+
+  let driveCode='--', driverColor=instinctMeta.A.color, arcDesc='', patternNote='';
+
+  if(cap&&!drive.ambiguous){
+    driveCode=cap.trigger+cap.driver;
+    driverColor=instinctMeta[cap.driver].color;
+    const arcNames=cap.arc.map(k=>instinctMeta[k].name);
+
+    if(cap.trigger===cap.driver){
+      arcDesc=instinctMeta[cap.driver].name+' — triggering and driving';
+      patternNote=`One instinct dominated clearly: <em style="color:${driverColor}">${instinctMeta[cap.driver].name}</em>. It triggers your response and drives your sustained effort.`;
+    } else if(cap.ambiguousDirection){
+      arcDesc=instinctMeta[cap.trigger].name+' + '+instinctMeta[cap.driver].name+' — direction unclear';
+      patternNote=`Two instincts showed up with equal strength: <em>${instinctMeta[cap.trigger].name}</em> and <em>${instinctMeta[cap.driver].name}</em>. Which triggers and which drives would take a conversation to determine.`;
+    } else {
+      arcDesc=arcNames.join(' → ');
+      const dName=instinctMeta[cap.driver].name, tName=instinctMeta[cap.trigger].name;
+      if(cap.arc.length===2){
+        patternNote=`Your instinctive energy moves from <em style="color:${instinctMeta[cap.trigger].color}">${tName}</em> to <em style="color:${driverColor}">${dName}</em>. ${tName} fires first. ${dName} is where your sustained effort goes.`;
+      } else {
+        const mid=cap.arc.slice(1,-1).map(k=>'<em style="color:'+instinctMeta[k].color+'">'+instinctMeta[k].name+'</em>');
+        patternNote=`Your instinctive energy moves from <em style="color:${instinctMeta[cap.trigger].color}">${tName}</em> through ${mid.join(' and ')} to <em style="color:${driverColor}">${dName}</em>.`;
       }
     }
-  }
-  
-  if (arcResult) {
-    const triggerInst = instinctData[arcResult.trigger];
-    const driverInst = instinctData[arcResult.driver];
-    const arcInstincts = getArcInstincts(arcResult.trigger, arcResult.driver);
-    const middleNames = arcInstincts.slice(1, -1).map(k => instinctData[k].name);
-    
-    let arcDesc = '';
-    if (arcInstincts.length === 2) {
-      arcDesc = `Your responses suggest an instinctive arc from <em>${triggerInst.name}</em> to <em>${driverInst.name}</em> — a tight, direct movement.`;
-    } else if (arcInstincts.length <= 4) {
-      arcDesc = `Your responses suggest an instinctive arc from <em>${triggerInst.name}</em> through ${middleNames.map(n => '<em>' + n + '</em>').join(' and ')} to <em>${driverInst.name}</em>.`;
-    }
-    
-    patternNote = `<p class="pattern-observation">${arcDesc}</p>
-    <p class="pattern-observation">${triggerInst.name} is where your attention lands first. ${driverInst.name} is where your sustained energy goes. That movement — from one to the other — is the shape of your instinctive pattern.</p>`;
-  } else if (topCount >= 4) {
-    // Strong single dominant — this is a clear signal of the driving instinct
-    patternNote = `<p class="pattern-observation">The signal here is unusually clear. Across very different situations — pressure, sustained effort, reflection — you kept reaching for the same instinctive response. <em>${topInstinct.name}</em> isn't just a preference. It's where your energy lives.</p>
-    <p class="pattern-observation">Your full pattern is an arc, not a single point — there's a triggering instinct that fires before ${topInstinct.name} engages, and that arc shapes how the whole movement feels. But the centre of gravity is unmistakable. Finding the rest of the arc takes a conversation.</p>`;
-  } else if (top2[1] > 0 && top2[1] === topCount) {
-    // Top two tied but couldn't resolve arc
-    const second = instinctData[top2[0]];
-    patternNote = `<p class="pattern-observation">Two instinctive tendencies showed up equally strongly: <em>${topInstinct.name}</em> and <em>${second.name}</em>. Both are clearly part of your pattern, but the direction of movement between them — which triggers and which drives — would take a fuller conversation to determine.</p>`;
-  } else if (top2[1] >= 2) {
-    const second = instinctData[top2[0]];
-    patternNote = `<p class="pattern-observation">Your secondary reach was toward <em>${second.name}</em>. The relationship between ${topInstinct.name} and ${second.name} — and the instincts that sit between them — is where the real specificity of your pattern lives.</p>`;
   } else {
-    // Spread result — no clear dominant or pair
-    patternNote = `<p class="pattern-observation">${topInstinct.name} came through most often, but the spread across your answers suggests something more nuanced is happening beneath the surface. Eight scenarios can reveal a tendency — but your full instinctive arc needs a different kind of conversation to map precisely.</p>`;
+    driveCode='--';
+    patternNote='Your responses were spread across non-adjacent instincts. The full picture needs a conversation.';
   }
-  
-  const resultsHTML = `
+
+  const fullCode=driveCode+'-'+engage.code;
+  const tendency=cap?tendencies[cap.driver]:'';
+
+  // Build arc name stack (vertical, below hexagon, each on its own line in colour)
+  let arcStackHTML='';
+  if(cap && !drive.ambiguous && cap.trigger!==cap.driver && !cap.ambiguousDirection){
+    arcStackHTML=cap.arc.map(k=>`<div style="color:${instinctMeta[k].color}">${instinctMeta[k].name}</div>`).join('');
+  } else if(cap && cap.trigger===cap.driver){
+    arcStackHTML=`<div style="color:${driverColor}">${instinctMeta[cap.driver].name}</div>`;
+  }
+
+  // Bars in cycle order centred on driver
+  const drvKey=cap?cap.driver:drive.sorted[0][0];
+  const di=cycle.indexOf(drvKey);
+  const barOrder=[];
+  for(let i=-3;i<=2;i++) barOrder.push(cycle[(di+i+6)%6]);
+  const maxBar=16+13+11;
+
+  let influencerHTML='';
+  if(drive.influencers.length>0&&cap&&!drive.ambiguous){
+    const names=drive.influencers.map(k=>`<em style="color:${instinctMeta[k].color}">${instinctMeta[k].name}</em>`);
+    influencerHTML=`<div class="influencer-note">Also noted: ${names.join(' and ')} appeared strongly but outside your main arc — an influencing tendency worth exploring.</div>`;
+  }
+
+  const copyText=`My Instinctive Signature: ${fullCode}${tendency?` — When it matters, tending to ${tendency}.`:''} Find yours at Primal.You`;
+
+  screen.innerHTML=`
     <div class="results">
       <div class="results-header">
-        <h2>Here's What Showed Up</h2>
-        <p>Eight situations. Each time, you had six legitimate options. But you didn't choose randomly.</p>
+        <h2>Your Instinctive Signature</h2>
+        <p>Here's what emerged from your responses.</p>
       </div>
-      
-      <div class="badge-section">
-        <div class="badge-hexagon">
-          <svg viewBox="0 0 208 240" xmlns="http://www.w3.org/2000/svg">
-            <polygon points="104,4 200,60 200,180 104,236 8,180 8,60" 
-              fill="${topInstinct.rawColor}" fill-opacity="0.07" stroke="${topInstinct.rawColor}" stroke-width="2.5" opacity="0.9"/>
-            <polygon points="104,16 188,66 188,174 104,224 20,174 20,66" 
-              fill="${topInstinct.rawColor}" fill-opacity="0.04" stroke="none"/>
-          </svg>
-          <div class="badge-content">
-            <div class="badge-label" style="color: ${topInstinct.rawColor}">Your Primal Tendency:</div>
-            <div class="badge-name" style="color: ${topInstinct.rawColor}">${topInstinct.name.toUpperCase()}</div>
-          </div>
-        </div>
-        <div class="badge-tendency">When it matters, tending to <em>${topInstinct.tendency}</em>, more often than not.</div>
-        <div class="badge-footer">Primal.You</div>
-      </div>
-      
-      <div class="pattern-display">
-        <p class="pattern-observation">Across these scenarios, you consistently reached for responses that involve <em>${topInstinct.name.toLowerCase()}</em> — ${topInstinct.desc.split('.')[0].toLowerCase()}.</p>
-        
-        ${patternNote}
-        
-        <div class="instinct-bars" id="instinct-bars">
-          ${(() => {
-            // Place dominant instinct at position 4 (index 3) with cycle order
-            const domIdx = cycle.indexOf(top1[0]);
-            // Work backward 3 steps from dominant to find the start of display order
-            const displayOrder = [];
-            for (let i = -3; i <= 2; i++) {
-              displayOrder.push(cycle[(domIdx + i + 6) % 6]);
-            }
-            return displayOrder.map(key => `
-            <div class="instinct-row">
-              <span class="instinct-label" style="color: ${instinctData[key].rawColor}">${instinctData[key].name}</span>
-              <div class="instinct-track">
-                <div class="instinct-fill" data-width="${(tally[key] / scenarios.length) * 100}" style="background: ${instinctData[key].color}"></div>
-              </div>
-              <span class="instinct-count">${tally[key]}</span>
+      <div class="result-card">
+        <div class="badge-section">
+          <div class="badge-hex">
+            <svg viewBox="0 0 240 276" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="120,4 232,69 232,207 120,272 8,207 8,69" fill="${driverColor}" fill-opacity=".07" stroke="${driverColor}" stroke-width="2.5" opacity=".9"/>
+              <polygon points="120,18 220,76 220,200 120,258 20,200 20,76" fill="${driverColor}" fill-opacity=".04"/>
+            </svg>
+            <div class="badge-content">
+              <div class="badge-pre-top" style="color:${driverColor}">Your</div>
+              <div class="badge-pre-main" style="color:${driverColor}">Instinctive</div>
+              <div class="badge-pre-bot" style="color:${driverColor}">Signature</div>
+              <div class="badge-code" style="color:${driverColor}">${fullCode}</div>
             </div>
-          `).join('');
-          })()}
+          </div>
+          ${arcStackHTML?`<div class="badge-arc-stack">${arcStackHTML}</div>`:''}
+          ${tendency?`<div style="font-size:16px;color:var(--text);margin-top:10px;max-width:400px;text-align:center;line-height:1.5;">When it matters, tending to <em style="color:${driverColor}">${tendency}</em>, more often than not.</div>`:''}
+          <div class="badge-url">Primal.You</div>
+        </div>
+
+        <div class="pattern-desc">${patternNote}</div>
+        ${influencerHTML}
+
+        <div class="instinct-bars">
+          ${barOrder.map(k=>`
+            <div class="instinct-row">
+              <span class="instinct-label" style="color:${instinctMeta[k].color}">${instinctMeta[k].name}</span>
+              <div class="instinct-track">
+                <div class="instinct-fill" data-width="${(drive.scores[k]/maxBar)*100}" style="background:${instinctMeta[k].color}"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+
+        <div class="engage-result">
+          <div class="engage-result-label">Engagement Style</div>
+          <div style="font-size:15px;color:var(--text);line-height:1.55;">${engage.desc}</div>
         </div>
       </div>
-      
-      <div class="divider"></div>
-      
-      <div class="cta-section">
-        <p>This is the surface pattern — what eight scenarios can reveal.</p>
-        <p>Your full instinctive pattern is more specific than this, and it shapes more than you'd expect: which work energises you, which drains you, why some achievements feel hollow and others feel like home.</p>
-        <p style="margin-top: 16px; font-weight: 500;">The full picture takes a conversation.</p>
-        <p class="cta-subtle" style="margin-top: 12px;">The Pattern Lab offers one-to-one Reflections that map your complete instinctive pattern. Not a personality test. A mirror.</p>
-        <p class="badge-share-hint" style="margin-top: 20px;">Screenshot your badge and share it — then ask someone else what theirs would be.</p>
+
+      <div class="actions">
+        <button class="btn-action" onclick="copyResult(this)" data-copy="${copyText.replace(/"/g,'&quot;')}">Copy my result</button>
       </div>
-    </div>
-  `;
-  
-  const screen = document.getElementById('results-screen');
-  screen.innerHTML = resultsHTML;
-  screen.classList.remove('hidden');
-  
-  // Animate bars
-  setTimeout(() => {
-    document.querySelectorAll('.instinct-fill').forEach(bar => {
-      bar.style.width = bar.dataset.width + '%';
+
+      <div class="divider"></div>
+
+      <div class="cta-section">
+        <p>This is your instinctive pattern — the direction your energy moves and how you prefer to deploy it.</p>
+        <p>The next layer is what it means: where it serves you, where it costs you, and the persistent sense that something either fits or doesn't.</p>
+        <p style="margin-top:14px;font-weight:500;">The full picture takes a conversation.</p>
+        <p style="margin-top:14px;font-size:14px;color:var(--text-light);">Screenshot your result and share it in <strong>The Pattern Lab</strong> community — then ask someone else what theirs would be.</p>
+        <p class="cta-subtle" style="margin-top:12px;">The Pattern Lab · Primal.You</p>
+      </div>
+    </div>`;
+
+  setTimeout(()=>{
+    document.querySelectorAll('.instinct-fill').forEach(bar=>{
+      bar.style.width=bar.dataset.width+'%';
     });
-  }, 300);
+  },300);
+}
+
+function copyResult(btn){
+  const text=btn.getAttribute('data-copy');
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='Copy my result'; btn.classList.remove('copied'); },2000);
+  });
 }
 </script>
-
 </body>
 </html>
