@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Matters To You Right Now — The Pattern Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FAFAF7;--text:#2C3A47;--text-light:#5A6B7A;--accent:#3B5C7A;
+    --accent-light:#E8EEF3;--card-bg:#FFFFFF;--border:#E2E2DD;--hover:#F5F5F0;
+    --shadow:0 2px 12px rgba(44,58,71,.06);--shadow-hover:0 4px 20px rgba(44,58,71,.1);
+    --radius:10px;--yes-bg:#EBF5EE;--yes-border:#1F8A4C;--no-bg:#FDF2F1;--no-border:#B0413E;
+    --v-stability:#2E7D6F;--v-separateness:#8B5E3C;--v-proficiency:#4A6FA5;
+    --v-accomplishment:#9A7A1C;--v-bonds:#A0527E;--v-unity:#6B6BAF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh;-webkit-font-smoothing:antialiased}
+  .container{max-width:720px;margin:0 auto;padding:40px 24px 80px}
+  .intro{text-align:center;animation:fadeIn .6s ease}
+  .intro-eyebrow{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+  .intro h1{font-family:'DM Serif Display',serif;font-size:30px;font-weight:400;line-height:1.25;margin-bottom:16px}
+  .intro p{font-size:16px;color:var(--text-light);max-width:560px;margin:0 auto 24px;font-weight:300;line-height:1.65}
+  .btn-primary{display:inline-block;padding:14px 40px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius);font-family:'Source Sans 3',sans-serif;font-size:16px;font-weight:500;cursor:pointer;transition:all .25s ease;margin-bottom:20px}
+  .btn-primary:hover{background:#2C4A65;transform:translateY(-1px);box-shadow:var(--shadow-hover)}
+  .progress-bar{width:100%;height:3px;background:var(--border);border-radius:3px;margin-bottom:24px;overflow:hidden}
+  .progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .5s ease}
+  .phase-block{background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow)}
+  .phase-block .phase-title{font-size:16px;margin-bottom:6px;font-weight:500}
+  .phase-block .phase-desc{font-size:16px;color:var(--text);line-height:1.55;font-weight:400}
+  .sort-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:32px 28px;text-align:center;box-shadow:var(--shadow);margin-bottom:16px;animation:slideUp .3s ease}
+  .sort-card .statement{font-size:17px;line-height:1.55;color:var(--text);margin-bottom:24px;font-weight:400}
+  .sort-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .btn-sort{padding:12px 20px;border-radius:var(--radius);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s ease;border:1.5px solid}
+  .btn-like{background:var(--yes-bg);border-color:var(--yes-border);color:var(--yes-border)}
+  .btn-like:hover{background:var(--yes-border);color:#fff}
+  .btn-unlike{background:var(--no-bg);border-color:var(--no-border);color:var(--no-border)}
+  .btn-unlike:hover{background:var(--no-border);color:#fff}
+  .sort-counter{font-size:13px;color:var(--text-light);text-align:center}
+  .rank-options{display:flex;flex-direction:column;gap:10px}
+  .rank-option{padding:16px 20px;background:var(--card-bg);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s ease;font-size:15px;line-height:1.5;color:var(--text)}
+  .rank-option:hover{border-color:var(--accent);background:var(--hover);transform:translateX(3px)}
+  .results{animation:fadeIn .6s ease}
+  .results-header{text-align:center;margin-bottom:32px}
+  .results-header h2{font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;margin-bottom:12px}
+  .results-header p{font-size:16px;color:var(--text-light);font-weight:300;line-height:1.6;max-width:520px;margin:0 auto}
+  .result-card{background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:36px 24px;margin-bottom:24px;box-shadow:var(--shadow)}
+  .triangle-section{margin:24px 0}
+  .triangle-row{display:flex;justify-content:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+  .triangle-cell{background:var(--card-bg);border:2px solid var(--border);border-radius:var(--radius);padding:14px 16px;text-align:center;flex:1;min-width:130px;max-width:220px}
+  .triangle-cell .cell-pattern{font-size:13px;font-weight:600;letter-spacing:.3px;margin-bottom:4px}
+  .triangle-cell .cell-value{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;opacity:.7}
+  .triangle-cell .cell-statement{font-size:12px;color:var(--text-light);margin-top:6px;line-height:1.4;font-weight:300}
+  .triangle-cell.paired .cell-pattern{font-weight:700}
+  .triangle-cell.paired{border-width:2.5px}
+  .tier-1 .triangle-cell{opacity:1}
+  .tier-2 .triangle-cell{opacity:.7}
+  .tier-3 .triangle-cell{opacity:.45}
+  .row-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);text-align:center;margin-bottom:8px}
+  .value-summary{margin-top:28px;padding-top:24px;border-top:1px solid var(--border)}
+  .value-summary-title{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;text-align:center}
+  .ribbon-label{font-size:11px;color:var(--text-light);text-align:center;margin-bottom:14px;font-style:italic}
+  .value-bars{display:flex;flex-direction:column;gap:12px}
+  .value-row{display:flex;align-items:center;gap:12px}
+  .value-label{font-size:13px;font-weight:600;width:120px;text-align:right}
+  .value-track{flex:1;height:8px;background:var(--accent-light);border-radius:8px;overflow:hidden}
+  .value-fill{height:100%;border-radius:8px;transition:width 1s ease;width:0}
+  .pattern-note{font-size:16px;line-height:1.65;color:var(--text);margin:20px 0;text-align:center}
+  .pattern-note em{font-style:normal;font-weight:600}
+  .actions{display:flex;gap:12px;justify-content:center;margin:24px 0;flex-wrap:wrap}
+  .btn-action{padding:10px 24px;border-radius:var(--radius);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s ease;border:1.5px solid var(--accent);color:var(--accent);background:transparent}
+  .btn-action:hover{background:var(--accent);color:#fff}
+  .btn-action.copied{background:var(--yes-border);border-color:var(--yes-border);color:#fff}
+  .divider{width:40px;height:1.5px;background:var(--border);margin:32px auto}
+  .cta-section{background:var(--card-bg);border:1.5px solid var(--border);border-radius:12px;padding:28px;text-align:center;box-shadow:var(--shadow)}
+  .cta-section p{font-size:15px;color:var(--text);line-height:1.6;margin-bottom:8px}
+  .cta-subtle{font-size:14px;color:var(--text-light);font-weight:300;font-style:italic}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .hidden{display:none}
+  @media(max-width:600px){.container{padding:28px 16px 60px}.intro h1{font-size:24px}.triangle-cell{min-width:100px;padding:10px 12px}.value-label{width:90px;font-size:12px}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="intro" class="intro">
+    <div class="intro-eyebrow">The Pattern Lab</div>
+    <h1>What Matters To You Right Now?</h1>
+    <p>Thirty-six statements about what people want from life. Three quick phases: sort, refine, rank. The result shows where your motivational energy is currently directed. Takes about five minutes.</p>
+    <button class="btn-primary" onclick="startPhase1()">Begin</button>
+    <p style="font-size:14px;color:var(--text-light);font-style:italic;max-width:480px;margin:0 auto;opacity:.8;">Every statement describes something people genuinely want. None is better than another. The question is which ones pull you most strongly right now.</p>
+  </div>
+  <div id="phase1-screen" class="hidden"></div>
+  <div id="phase2-screen" class="hidden"></div>
+  <div id="phase3-screen" class="hidden"></div>
+  <div id="results-screen" class="hidden"></div>
+</div>
+<script>
+const stmts=[
+  {id:"SF1",value:"Stability",pattern:"Nurturing Foundations",text:"I want life to feel predictable and safe."},
+  {id:"SF2",value:"Stability",pattern:"Nurturing Foundations",text:"I want security and comfort for the people who depend on me."},
+  {id:"SF3",value:"Stability",pattern:"Nurturing Foundations",text:"I want steadiness that lets me handle change without losing my footing."},
+  {id:"SV1",value:"Stability",pattern:"Nurturing Vitality",text:"I want calm when life feels overwhelming."},
+  {id:"SV2",value:"Stability",pattern:"Nurturing Vitality",text:"I want my body and mind to feel healthy and resilient."},
+  {id:"SV3",value:"Stability",pattern:"Nurturing Vitality",text:"I want balance so that all parts of my life can work together."},
+  {id:"EI1",value:"Separateness",pattern:"Expressing Identity",text:"I want to know what makes me different from everyone else."},
+  {id:"EI2",value:"Separateness",pattern:"Expressing Identity",text:"I want others to see the real me, not an edited version."},
+  {id:"EI3",value:"Separateness",pattern:"Expressing Identity",text:"I want self-knowledge that lets me live honestly."},
+  {id:"EA1",value:"Separateness",pattern:"Expressing Autonomy",text:"I want freedom to choose my own path."},
+  {id:"EA2",value:"Separateness",pattern:"Expressing Autonomy",text:"I want control over my actions and their consequences."},
+  {id:"EA3",value:"Separateness",pattern:"Expressing Autonomy",text:"I want independence — to be responsible for my own direction."},
+  {id:"CP1",value:"Proficiency",pattern:"Cultivating Potential",text:"I want to explore and learn things I haven't tried before."},
+  {id:"CP2",value:"Proficiency",pattern:"Cultivating Potential",text:"I want chances to discover how far my abilities can stretch."},
+  {id:"CP3",value:"Proficiency",pattern:"Cultivating Potential",text:"I want experiences that open my mind to new ways of thinking."},
+  {id:"CC1",value:"Proficiency",pattern:"Cultivating Capability",text:"I want to practise until my skills feel natural and reliable."},
+  {id:"CC2",value:"Proficiency",pattern:"Cultivating Capability",text:"I want guidance that helps me improve at what matters to me."},
+  {id:"CC3",value:"Proficiency",pattern:"Cultivating Capability",text:"I want mastery earned through steady effort and real testing."},
+  {id:"AE1",value:"Accomplishment",pattern:"Improving Effectiveness",text:"I want results that show my work made a difference."},
+  {id:"AE2",value:"Accomplishment",pattern:"Improving Effectiveness",text:"I want to make things run better because of my effort."},
+  {id:"AE3",value:"Accomplishment",pattern:"Improving Effectiveness",text:"I want to leave something stronger behind than I found it."},
+  {id:"AR1",value:"Accomplishment",pattern:"Improving Recognition",text:"I want my effort noticed and respected by others."},
+  {id:"AR2",value:"Accomplishment",pattern:"Improving Recognition",text:"I want achievements that earn genuine appreciation."},
+  {id:"AR3",value:"Accomplishment",pattern:"Improving Recognition",text:"I want proof that my impact is real and acknowledged."},
+  {id:"BR1",value:"Bonds",pattern:"Forging Relationships",text:"I want closeness with people who share what matters to me."},
+  {id:"BR2",value:"Bonds",pattern:"Forging Relationships",text:"I want relationships that last and make us both stronger."},
+  {id:"BR3",value:"Bonds",pattern:"Forging Relationships",text:"I want connections built on shared understanding and trust."},
+  {id:"BG1",value:"Bonds",pattern:"Forging Guardianship",text:"I want to protect the people and groups I care about."},
+  {id:"BG2",value:"Bonds",pattern:"Forging Guardianship",text:"I want to preserve the things that hold us together."},
+  {id:"BG3",value:"Bonds",pattern:"Forging Guardianship",text:"I want to be trusted to guard what truly matters."},
+  {id:"UI1",value:"Unity",pattern:"Honouring Interdependence",text:"I want to feel how life connects us all."},
+  {id:"UI2",value:"Unity",pattern:"Honouring Interdependence",text:"I want to give back where I've been supported."},
+  {id:"UI3",value:"Unity",pattern:"Honouring Interdependence",text:"I want gratitude to guide how I treat others."},
+  {id:"UB1",value:"Unity",pattern:"Honouring Balance",text:"I want fairness when things feel unequal."},
+  {id:"UB2",value:"Unity",pattern:"Honouring Balance",text:"I want to restore harmony when something feels wrong."},
+  {id:"UB3",value:"Unity",pattern:"Honouring Balance",text:"I want every voice and perspective to belong equally."}
+];
+const ribbonOrder=["Stability","Separateness","Proficiency","Accomplishment","Bonds","Unity"];
+const valueMeta={
+  "Stability":{rawColor:"#2E7D6F"},"Separateness":{rawColor:"#8B5E3C"},
+  "Proficiency":{rawColor:"#4A6FA5"},"Accomplishment":{rawColor:"#9A7A1C"},
+  "Bonds":{rawColor:"#A0527E"},"Unity":{rawColor:"#6B6BAF"}
+};
+
+let shuffled=[],sortIdx=0,liked=[],discarded=[],sortMode='discard';
+let phase2Kept=[],phase2Discarded=[];
+let remaining=[],ranked=[];
+const P1_TARGET=18,P2_TARGET=12;
+
+// === PHASE 1: BROAD SORT (36 -> 18) ===
+function startPhase1(){
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('phase1-screen').classList.remove('hidden');
+  shuffled=[...stmts].sort(()=>Math.random()-.5);
+  sortIdx=0;liked=[];discarded=[];sortMode='discard';
+  renderP1();
+}
+function renderP1(){
+  const s=document.getElementById('phase1-screen');
+  if(liked.length>=P1_TARGET&&sortMode!=='discard'){startPhase2();return}
+  if(sortIdx>=shuffled.length){handleP1Done();return}
+  const st=shuffled[sortIdx],total=shuffled.length;
+  let title,desc,tc='var(--text)';
+  if(sortMode==='discard'){
+    title="Each statement describes something people want. Some will matter to you right now. Others won't.";
+    desc="Keep the ones that matter. Discard the ones that don't — right now.";
+  }else if(sortMode==='rescue'){
+    title=`You kept ${liked.length} — we need ${P1_TARGET-liked.length} more to reach ${P1_TARGET}.`;
+    desc="Here are the ones you discarded. Some might matter more than you first thought.";tc='var(--yes-border)';
+  }else if(sortMode==='narrow'){
+    title="You kept too many — we need to get down to "+P1_TARGET+".";
+    desc="Discard the ones that matter least right now.";tc='var(--no-border)';
+  }
+  s.innerHTML=`<div class="phase-block"><div class="phase-title" style="color:${tc}">${title}</div><div class="phase-desc">${desc}</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${(sortIdx/total)*100}%"></div></div>
+    <div class="sort-card"><div style="font-size:14px;color:var(--accent);margin-bottom:12px;font-weight:500;">Does this matter to you right now?</div>
+    <div class="statement">"${st.text}"</div>
+    <div class="sort-buttons"><button class="btn-sort btn-unlike" onclick="p1Resp(false)">Not right now — Discard</button>
+    <button class="btn-sort btn-like" onclick="p1Resp(true)">Yes, this matters — Keep</button></div></div>
+    <div class="sort-counter">${liked.length} kept · need ${P1_TARGET}</div>`;
+}
+function p1Resp(yes){
+  const st=shuffled[sortIdx];
+  if(yes)liked.push(st);else if(sortMode==='discard')discarded.push(st);
+  sortIdx++;
+  if(sortMode==='narrow'&&liked.length===P1_TARGET){startPhase2();return}
+  if(sortMode==='rescue'&&liked.length>=P1_TARGET){startPhase2();return}
+  renderP1();
+}
+function handleP1Done(){
+  if(liked.length===P1_TARGET){startPhase2();return}
+  if(liked.length<P1_TARGET){
+    sortMode='rescue';shuffled=[...discarded].sort(()=>Math.random()-.5);discarded=[];sortIdx=0;
+    document.getElementById('phase1-screen').innerHTML=`<div class="phase-block" style="border-color:rgba(31,138,76,.2)"><div class="phase-title" style="color:var(--yes-border)">You kept ${liked.length} — we need at least ${P1_TARGET}.</div><div class="phase-desc">Let's go through the ones you discarded. Keep a few more.</div></div><button class="btn-primary" onclick="renderP1()" style="margin-top:16px">Continue</button>`;return;
+  }
+  if(liked.length>P1_TARGET){
+    sortMode='narrow';const n=liked.length;shuffled=[...liked].sort(()=>Math.random()-.5);liked=[];sortIdx=0;
+    document.getElementById('phase1-screen').innerHTML=`<div class="phase-block" style="border-color:rgba(176,65,62,.2)"><div class="phase-title" style="color:var(--no-border)">You kept ${n} — we need ${P1_TARGET}.</div><div class="phase-desc">You'll see them again. Discard the ones that matter least.</div></div><button class="btn-primary" onclick="renderP1()" style="margin-top:16px">Continue</button>`;return;
+  }
+}
+
+// === PHASE 2: TIGHTER SORT (18 -> 12) ===
+function startPhase2(){
+  document.getElementById('phase1-screen').classList.add('hidden');
+  document.getElementById('phase2-screen').classList.remove('hidden');
+  document.getElementById('phase2-screen').innerHTML=`<div class="phase-block"><div class="phase-title" style="color:var(--accent)">Phase Two: Refine</div><div class="phase-desc">Good — you've kept ${liked.length} statements. Now be stricter. You'll see them again. This time, keep only the ${P2_TARGET} that <em>really</em> pull you.</div></div><button class="btn-primary" onclick="beginP2()" style="margin-top:16px">Continue</button>`;
+}
+function beginP2(){
+  shuffled=[...liked].sort(()=>Math.random()-.5);phase2Kept=[];phase2Discarded=[];sortIdx=0;sortMode='discard';renderP2();
+}
+function renderP2(){
+  const s=document.getElementById('phase2-screen');
+  if(phase2Kept.length>=P2_TARGET&&sortMode!=='discard'){startPhase3();return}
+  if(sortIdx>=shuffled.length){handleP2Done();return}
+  const st=shuffled[sortIdx],total=shuffled.length;
+  let title,desc,tc='var(--accent)';
+  if(sortMode==='discard'){
+    title="Be stricter this time. Keep only what really pulls you.";desc="Keep your strongest "+P2_TARGET+". Discard the rest.";
+  }else if(sortMode==='rescue'){
+    title=`You kept ${phase2Kept.length} — we need ${P2_TARGET-phase2Kept.length} more.`;desc="Rescue a few from your discards.";tc='var(--yes-border)';
+  }else if(sortMode==='narrow'){
+    title="Still too many — keep only the strongest.";desc="We'll stop at "+P2_TARGET+".";tc='var(--no-border)';
+  }
+  s.innerHTML=`<div class="phase-block"><div class="phase-title" style="color:${tc}">${title}</div><div class="phase-desc">${desc}</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${(sortIdx/total)*100}%"></div></div>
+    <div class="sort-card"><div style="font-size:14px;color:var(--accent);margin-bottom:12px;font-weight:500;">Does this really matter to you right now?</div>
+    <div class="statement">"${st.text}"</div>
+    <div class="sort-buttons"><button class="btn-sort btn-unlike" onclick="p2Resp(false)">Let it go — Discard</button>
+    <button class="btn-sort btn-like" onclick="p2Resp(true)">This really matters — Keep</button></div></div>
+    <div class="sort-counter">${phase2Kept.length} kept · need ${P2_TARGET}</div>`;
+}
+function p2Resp(yes){
+  const st=shuffled[sortIdx];
+  if(yes)phase2Kept.push(st);else if(sortMode==='discard')phase2Discarded.push(st);
+  sortIdx++;
+  if(sortMode==='narrow'&&phase2Kept.length===P2_TARGET){startPhase3();return}
+  if(sortMode==='rescue'&&phase2Kept.length>=P2_TARGET){startPhase3();return}
+  renderP2();
+}
+function handleP2Done(){
+  if(phase2Kept.length===P2_TARGET){startPhase3();return}
+  if(phase2Kept.length<P2_TARGET){
+    sortMode='rescue';shuffled=[...phase2Discarded].sort(()=>Math.random()-.5);phase2Discarded=[];sortIdx=0;
+    document.getElementById('phase2-screen').innerHTML=`<div class="phase-block" style="border-color:rgba(31,138,76,.2)"><div class="phase-title" style="color:var(--yes-border)">You kept ${phase2Kept.length} — we need ${P2_TARGET}.</div><div class="phase-desc">Rescue a few more.</div></div><button class="btn-primary" onclick="renderP2()" style="margin-top:16px">Continue</button>`;return;
+  }
+  if(phase2Kept.length>P2_TARGET){
+    sortMode='narrow';const n=phase2Kept.length;shuffled=[...phase2Kept].sort(()=>Math.random()-.5);phase2Kept=[];sortIdx=0;
+    document.getElementById('phase2-screen').innerHTML=`<div class="phase-block" style="border-color:rgba(176,65,62,.2)"><div class="phase-title" style="color:var(--no-border)">You kept ${n} — need ${P2_TARGET}.</div><div class="phase-desc">One more pass. Discard the weakest.</div></div><button class="btn-primary" onclick="renderP2()" style="margin-top:16px">Continue</button>`;return;
+  }
+}
+
+// === PHASE 3: RANK THE 12 ===
+function startPhase3(){
+  document.getElementById('phase2-screen').classList.add('hidden');
+  document.getElementById('phase3-screen').classList.remove('hidden');
+  remaining=[...phase2Kept].sort(()=>Math.random()-.5);ranked=[];
+  document.getElementById('phase3-screen').innerHTML=`<div class="phase-block"><div class="phase-title" style="color:var(--accent)">Final Phase: Rank</div><div class="phase-desc">Your ${remaining.length} strongest wants. Remove the weakest one at a time. The last one standing is what matters most to you right now.</div></div><button class="btn-primary" onclick="renderRank()" style="margin-top:16px">Continue</button>`;
+}
+function renderRank(){
+  const s=document.getElementById('phase3-screen');
+  const rem=remaining.length;
+  if(rem<=1){if(rem===1)ranked.unshift(remaining[0]);showResults();return}
+  const prompt=rem>8?'Which of these matters to you <span style="color:var(--no-border);font-weight:600;">least</span> right now?'
+    :rem>4?'Which matters <span style="color:var(--no-border);font-weight:600;">least</span>?'
+    :rem>2?'Nearly there — which matters <span style="color:var(--no-border);font-weight:600;">least</span>?'
+    :'Last two — which matters <span style="color:var(--no-border);font-weight:600;">less</span>?';
+  s.innerHTML=`<div class="phase-block"><div class="phase-title" style="color:var(--no-border);">Remove the weakest. What remains reveals your priorities.</div><div class="phase-desc">${prompt} Tap it to remove.</div></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${((P2_TARGET-rem)/P2_TARGET)*100}%"></div></div>
+    <div class="sort-counter">${rem} remaining</div>
+    <div class="rank-options">${remaining.map((st,i)=>`<div class="rank-option" onclick="rankRemove(${i})">${st.text}</div>`).join('')}</div>`;
+}
+function rankRemove(i){ranked.unshift(remaining.splice(i,1)[0]);renderRank()}
+
+// === RESULTS ===
+function showResults(){
+  document.getElementById('phase3-screen').classList.add('hidden');
+  const screen=document.getElementById('results-screen');screen.classList.remove('hidden');
+  const patternCounts={},valueScores={};
+  ribbonOrder.forEach(v=>valueScores[v]=0);
+  ranked.forEach((st,i)=>{
+    const pts=12-i;
+    if(!patternCounts[st.pattern])patternCounts[st.pattern]=0;
+    patternCounts[st.pattern]++;valueScores[st.value]+=pts;
+  });
+  const tier1=ranked.slice(0,3),tier2=ranked.slice(3,7),tier3=ranked.slice(7,12);
+  const pairedPatterns=Object.entries(patternCounts).filter(([k,v])=>v>=2).map(([k])=>k);
+  const maxVS=Math.max(...Object.values(valueScores),1);
+  const valueSorted=[...ribbonOrder].sort((a,b)=>valueScores[b]-valueScores[a]);
+  const topValues=valueSorted.filter(v=>valueScores[v]>0).slice(0,3);
+
+  function renderCell(st){
+    const vm=valueMeta[st.value],isPaired=pairedPatterns.includes(st.pattern);
+    return `<div class="triangle-cell ${isPaired?'paired':''}" style="border-color:${vm.rawColor}${isPaired?'':'44'}">
+      <div class="cell-pattern" style="color:${vm.rawColor}">${st.pattern}</div>
+      <div class="cell-value" style="color:${vm.rawColor}">${st.value}</div>
+      <div class="cell-statement">${st.text.replace(/^I want /,'').replace(/\.$/,'')}</div></div>`;
+  }
+
+  const topVN=topValues.map(k=>`<em style="color:${valueMeta[k].rawColor}">${k}</em>`);
+  let summary='';
+  if(topVN.length>=2)summary=`Right now, your motivational energy is most strongly directed toward ${topVN.join(' and ')}. These are the conditions you're currently working to support or improve.`;
+  else if(topVN.length===1)summary=`Right now, your motivational energy is strongly concentrated on ${topVN[0]}.`;
+
+  const copyText=`My current values focus: ${topValues.join(' + ')}. Find yours at Primal.You`;
+
+  screen.innerHTML=`<div class="results">
+    <div class="results-header"><h2>What Matters To You Right Now</h2><p>You sorted thirty-six wants and ranked the ones that pulled strongest. Here's where your motivational energy is directed.</p></div>
+    <div class="result-card">
+      <div class="triangle-section">
+        <div class="row-label">Strongest</div>
+        <div class="triangle-row tier-1">${tier1.map(st=>renderCell(st)).join('')}</div>
+        <div class="triangle-row tier-2">${tier2.map(st=>renderCell(st)).join('')}</div>
+        <div class="triangle-row tier-3">${tier3.map(st=>renderCell(st)).join('')}</div>
+        <div class="row-label" style="margin-top:8px">Present</div>
+      </div>
+      <div class="pattern-note">${summary}</div>
+      <p style="font-size:14px;color:var(--text-light);text-align:center;line-height:1.5;">This is a snapshot, not a permanent label. Values shift as circumstances change. What matters is noticing where your energy goes — and whether that's where you want it.</p>
+      ${pairedPatterns.length>0?`<div style="margin-top:16px;padding:14px 18px;background:#FFFBF0;border:1px solid #E8DFC0;border-radius:var(--radius);font-size:14px;line-height:1.55;"><strong>Clusters noticed:</strong> ${pairedPatterns.map(p=>{const v=stmts.find(s=>s.pattern===p).value;return `<span style="color:${valueMeta[v].rawColor};font-weight:600;">${p}</span>`;}).join(', ')} — multiple statements from ${pairedPatterns.length===1?'this pattern':'these patterns'} appeared in your top twelve, suggesting focused attention here.</div>`:''}
+      <div class="value-summary">
+        <div class="value-summary-title">Value Concentration</div>
+        <div class="ribbon-label">Inward-focused ← → Outward-focused</div>
+        <div class="value-bars">${ribbonOrder.map(k=>`<div class="value-row"><span class="value-label" style="color:${valueMeta[k].rawColor}">${k}</span><div class="value-track"><div class="value-fill" data-width="${(valueScores[k]/maxVS)*100}" style="background:${valueMeta[k].rawColor}"></div></div></div>`).join('')}</div>
+      </div>
+    </div>
+    <div class="actions"><button class="btn-action" onclick="copyResult(this)" data-copy="${copyText.replace(/"/g,'&quot;')}">Copy my result</button></div>
+    <div class="divider"></div>
+    <div class="cta-section">
+      <p>These are the conditions you're currently working to support — whether you knew it or not.</p>
+      <p>Your instinctive pattern (how you act) and your values focus (why you act) together explain more than either one alone. When they're aligned, work feels natural. When they're not, something feels persistently off.</p>
+      <p style="margin-top:14px;font-weight:500;">Understanding both takes a conversation.</p>
+      <p style="margin-top:14px;font-size:14px;color:var(--text-light);">Screenshot your result and share it in <strong>The Pattern Lab</strong> community.</p>
+      <p class="cta-subtle" style="margin-top:12px;">The Pattern Lab · Primal.You</p>
+    </div></div>`;
+  setTimeout(()=>{document.querySelectorAll('.value-fill').forEach(bar=>{bar.style.width=bar.dataset.width+'%'})},300);
+}
+function copyResult(btn){
+  const text=btn.getAttribute('data-copy');
+  navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied!';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy my result';btn.classList.remove('copied')},2000)});
+}
+</script>
+</body>
+</html>
