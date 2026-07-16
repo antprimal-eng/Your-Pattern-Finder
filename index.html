@@ -1,695 +1,624 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Find Your Pattern — The Pattern Lab</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>The Illuminator — full suite prototype</title>
 <style>
-  :root {
-    --bg: #FAFAF7;
-    --text: #2C3A47;
-    --text-light: #5A6B7A;
-    --accent: #3B5C7A;
-    --accent-light: #E8EEF3;
-    --card-bg: #FFFFFF;
-    --border: #E2E2DD;
-    --hover: #F5F5F0;
-    --shadow: 0 2px 12px rgba(44, 58, 71, 0.06);
-    --shadow-hover: 0 4px 20px rgba(44, 58, 71, 0.1);
-    --radius: 10px;
-    --yes-bg: #EBF5EE; --yes-border: #1F8A4C;
-    --no-bg: #FDF2F1; --no-border: #B0413E;
-    --c-A: #D33A2C; --c-L: #7C4BB3; --c-P: #2B6FD0;
-    --c-R: #1F8A4C; --c-I: #9A7A1C; --c-M: #7A3F1D;
+  :root{
+    --paper:#FAFAF7; --ink:#1C2321; --muted:#5C6663; --line:#DCDED8;
+    --petrol:#0F6B66; --petrol-soft:#E3EFED; --petrol-mid:#BFDAD6;
+    --amber:#B0752B; --card:#FFFFFF;
+    --row1bg:#BFD9D4; --row2bg:#DAEAE6; --row3bg:#EFF6F4;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Source Sans 3',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; -webkit-font-smoothing:antialiased; }
-  .container { max-width:680px; margin:0 auto; padding:40px 24px 80px; }
-
-  /* INTRO */
-  .intro { text-align:center; animation:fadeIn .6s ease; }
-  .intro-eyebrow { font-size:12px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--accent); margin-bottom:16px; }
-  .intro h1 { font-family:'DM Serif Display',serif; font-size:30px; font-weight:400; line-height:1.25; margin-bottom:16px; }
-  .intro p { font-size:16px; color:var(--text-light); max-width:540px; margin:0 auto 24px; font-weight:300; line-height:1.65; }
-  .btn-primary { display:inline-block; padding:14px 40px; background:var(--accent); color:#fff; border:none; border-radius:var(--radius); font-family:'Source Sans 3',sans-serif; font-size:16px; font-weight:500; cursor:pointer; transition:all .25s ease; margin-bottom:20px; }
-  .btn-primary:hover { background:#2C4A65; transform:translateY(-1px); box-shadow:var(--shadow-hover); }
-
-  /* PROGRESS */
-  .progress-bar { width:100%; height:3px; background:var(--border); border-radius:3px; margin-bottom:24px; overflow:hidden; }
-  .progress-fill { height:100%; background:var(--accent); border-radius:3px; transition:width .5s ease; }
-
-  /* PHASE INSTRUCTIONS */
-  .phase-block { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:20px 24px; margin-bottom:20px; box-shadow:var(--shadow); }
-  .phase-block .phase-title { font-size:16px; margin-bottom:6px; color:var(--text); font-weight:500; }
-  .phase-block .phase-desc { font-size:16px; color:var(--text); line-height:1.55; font-weight:400; }
-
-  /* SORT CARD */
-  .sort-card { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:32px 28px; text-align:center; box-shadow:var(--shadow); margin-bottom:16px; animation:slideUp .3s ease; }
-  .sort-card .statement { font-size:17px; line-height:1.55; color:var(--text); margin-bottom:24px; font-weight:400; }
-  .sort-buttons { display:flex; gap:16px; justify-content:center; }
-  .btn-sort { padding:12px 20px; border-radius:var(--radius); font-family:'Source Sans 3',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all .2s ease; border:1.5px solid; }
-  .btn-like { background:var(--yes-bg); border-color:var(--yes-border); color:var(--yes-border); }
-  .btn-like:hover { background:var(--yes-border); color:#fff; }
-  .btn-unlike { background:var(--no-bg); border-color:var(--no-border); color:var(--no-border); }
-  .btn-unlike:hover { background:var(--no-border); color:#fff; }
-  .sort-counter { font-size:13px; color:var(--text-light); text-align:center; }
-
-  /* RANK / ENGAGEMENT OPTIONS */
-  .rank-options { display:flex; flex-direction:column; gap:10px; }
-  .rank-option { padding:16px 20px; background:var(--card-bg); border:1.5px solid var(--border); border-radius:var(--radius); cursor:pointer; transition:all .2s ease; font-size:15px; line-height:1.5; color:var(--text); }
-  .rank-option:hover { border-color:var(--accent); background:var(--hover); transform:translateX(3px); }
-  .engage-label { font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-light); margin-bottom:4px; }
-
-  /* RESULTS */
-  .results { animation:fadeIn .6s ease; }
-  .results-header { text-align:center; margin-bottom:32px; }
-  .results-header h2 { font-family:'DM Serif Display',serif; font-size:28px; font-weight:400; margin-bottom:12px; }
-  .results-header p { font-size:16px; color:var(--text-light); font-weight:300; line-height:1.6; max-width:500px; margin:0 auto; }
-
-  .result-card { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:36px 32px; margin-bottom:24px; box-shadow:var(--shadow); text-align:center; }
-
-  /* Badge */
-  .badge-section { display:flex; flex-direction:column; align-items:center; margin-bottom:24px; }
-  .badge-hex { position:relative; width:240px; height:276px; display:flex; align-items:center; justify-content:center; }
-  .badge-hex svg { position:absolute; top:0; left:0; width:100%; height:100%; }
-  .badge-content { position:relative; z-index:1; text-align:center; padding:0 16px; }
-  .badge-pre-top { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; opacity:.7; }
-  .badge-pre-main { font-family:'DM Serif Display',serif; font-size:18px; margin:2px 0 4px; }
-  .badge-pre-bot { font-size:11px; font-weight:500; letter-spacing:1.5px; text-transform:uppercase; opacity:.7; }
-  .badge-code { font-family:'DM Serif Display',serif; font-size:44px; letter-spacing:5px; line-height:1.2; margin-top:6px; }
-  .badge-arc-stack { margin-top:12px; text-align:center; line-height:1.8; font-size:15px; font-weight:500; }
-  .badge-url { font-family:'DM Serif Display',serif; font-size:15px; color:var(--accent); margin-top:10px; }
-
-  .pattern-desc { font-size:16px; line-height:1.65; color:var(--text); margin:20px 0; text-align:left; }
-  .pattern-desc em { font-style:normal; font-weight:600; }
-
-  .instinct-bars { display:flex; flex-direction:column; gap:12px; margin:24px 0; }
-  .instinct-row { display:flex; align-items:center; gap:12px; }
-  .instinct-label { font-size:13px; font-weight:600; width:100px; text-align:right; }
-  .instinct-track { flex:1; height:8px; background:var(--accent-light); border-radius:8px; overflow:hidden; }
-  .instinct-fill { height:100%; border-radius:8px; transition:width 1s ease; width:0; }
-
-  .engage-result { margin-top:20px; padding-top:20px; border-top:1px solid var(--border); text-align:left; }
-  .engage-result-label { font-size:12px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:8px; }
-
-  .influencer-note { margin-top:16px; padding:14px 18px; background:#FFFBF0; border:1px solid #E8DFC0; border-radius:var(--radius); font-size:14px; line-height:1.55; text-align:left; }
-
-  /* Actions */
-  .actions { display:flex; gap:12px; justify-content:center; margin:24px 0; flex-wrap:wrap; }
-  .btn-action { padding:10px 24px; border-radius:var(--radius); font-family:'Source Sans 3',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:all .2s ease; border:1.5px solid var(--accent); color:var(--accent); background:transparent; }
-  .btn-action:hover { background:var(--accent); color:#fff; }
-  .btn-action.copied { background:var(--yes-border); border-color:var(--yes-border); color:#fff; }
-
-  .cta-section { background:var(--card-bg); border:1.5px solid var(--border); border-radius:12px; padding:28px; text-align:center; box-shadow:var(--shadow); }
-  .cta-section p { font-size:15px; color:var(--text); line-height:1.6; margin-bottom:8px; }
-  .cta-subtle { font-size:14px; color:var(--text-light); font-weight:300; font-style:italic; }
-
-  .divider { width:40px; height:1.5px; background:var(--border); margin:32px auto; }
-
-  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  @keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-  .hidden { display:none; }
-  @media(max-width:600px) { .container{padding:28px 16px 60px} .intro h1{font-size:24px} .badge-code{font-size:28px} .instinct-label{width:80px;font-size:12px} }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
+    font:17px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:480px;margin:0 auto;padding:20px 16px 40px;min-height:100vh;display:flex;flex-direction:column}
+  h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:22px;margin:0 0 2px}
+  h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:18px;margin:0 0 8px}
+  .stem{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;margin:14px 0 6px}
+  .note{color:var(--muted);font-size:14.5px;margin:0 0 10px}
+  .progress{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:2px 0 12px}
+  .partlabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--petrol);font-weight:700;margin-bottom:2px}
+  .track{height:4px;background:var(--line);border-radius:2px;margin:2px 0 16px;overflow:hidden}
+  .trackfill{height:100%;background:var(--petrol);transition:width .25s}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 18px;font-size:19px;line-height:1.45;min-height:88px;display:flex;align-items:center;
+    box-shadow:0 1px 3px rgba(28,35,33,.06)}
+  .fadein{animation:fi .18s ease-out}
+  @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){.fadein{animation:none}}
+  .btnrow{display:flex;gap:10px;margin-top:14px}
+  button{font:inherit;border-radius:12px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);padding:15px 12px;min-height:56px;cursor:pointer;flex:1}
+  button:focus-visible{outline:3px solid var(--petrol);outline-offset:2px}
+  button.primary{background:var(--petrol);border-color:var(--petrol);color:#fff;font-weight:600}
+  button.ghost{background:none;border:none;color:var(--muted);text-decoration:underline;min-height:44px;flex:0 0 auto;padding:8px}
+  button:disabled{opacity:.45;cursor:default}
+  .shelf{border:1px solid var(--line);border-radius:12px 12px 0 0;background:var(--card);width:100%;text-align:left}
+  .shelf[data-full="1"]{opacity:.55;cursor:default}
+  .shelfhead{display:flex;justify-content:space-between;align-items:center;padding:12px 12px 10px}
+  .shelfname{font-weight:600;font-size:15px}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;max-width:120px;justify-content:flex-end}
+  .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);background:transparent}
+  .dot.on{background:var(--petrol);border-color:var(--petrol)}
+  .full{font-size:12px;color:var(--amber);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  .shelfwrap{margin-top:10px}
+  .shelfwrap[data-row="0"] .shelf{background:var(--row1bg)}
+  .shelfwrap[data-row="1"] .shelf{background:var(--row2bg)}
+  .shelfwrap[data-row="2"] .shelf{background:var(--row3bg)}
+  .chips{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-top:none;
+    border-radius:0 0 12px 12px;padding:8px 10px;background:var(--card)}
+  .chips:empty{display:none}
+  .chipbtn{font:inherit;font-size:13px;color:var(--ink);background:none;border:1px solid var(--line);
+    border-radius:8px;padding:8px 10px;min-height:40px;text-align:left;cursor:pointer;width:100%}
+  .chipbtn::after{content:" \2715";color:var(--muted)}
+  .listcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:8px;
+    display:flex;gap:10px;align-items:flex-start}
+  .listcard .txt{flex:1;font-size:16px}
+  .mini{display:flex;flex-direction:column;gap:6px}
+  .mini button{min-height:40px;padding:6px 12px;font-size:14px;flex:0 0 auto}
+  .banner{background:var(--petrol-soft);border:1px solid var(--petrol-mid);border-radius:12px;padding:12px 14px;
+    font-size:15px;margin:10px 0}
+  .warn{background:#F6ECDC;border-color:#E4CFA8}
+  .pick{width:100%;text-align:left;margin-top:8px;font-size:16.5px;padding:16px 14px}
+  .pick .badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+    border-radius:50%;background:var(--petrol);color:#fff;font-size:13px;font-weight:700;margin-right:10px;flex:0 0 auto}
+  .pick[data-locked="1"]{background:var(--petrol-soft);border-color:var(--petrol-mid);cursor:default}
+  .res{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;margin-top:6px;font-size:14.5px}
+  .res.dim{opacity:.55}
+  .badge2{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+    border-radius:50%;background:var(--muted);color:#fff;font-size:12px;font-weight:700;flex:0 0 auto}
+  .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;letter-spacing:.22em;
+    background:var(--ink);color:#fff;border-radius:12px;padding:14px;text-align:center;margin:10px 0 4px}
+  .codesub{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:10px}
+  .spacer{flex:1}
+  .shelftitle{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 2px}
+  .tick{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:14px;margin-top:8px;cursor:pointer}
+  .tick input{width:22px;height:22px;flex:0 0 auto}
+  .tick .txt{font-size:16px;flex:1}
+  .opt{width:100%;text-align:left;margin-top:8px;font-size:16.5px;padding:16px 14px}
+  .opt[data-state="first"]{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+  .opt[data-state="second"]{background:var(--petrol-soft);border-color:var(--petrol-mid)}
+  .opt .tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.85;display:block;margin-bottom:3px}
+  textarea.record{width:100%;min-height:110px;font:12.5px ui-monospace,Menlo,monospace;
+    border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--card);margin-top:8px}
+  .divider{border:none;border-top:1px solid var(--line);margin:22px 0}
+  .twopick{color:var(--amber);font-weight:700;font-size:15.5px;margin:2px 0 12px;
+    background:#FBF1E1;border:1px solid #E4CFA8;border-radius:10px;padding:9px 12px}
 </style>
 </head>
 <body>
-<div class="container">
-  <div id="intro" class="intro">
-    <div class="intro-eyebrow">The Pattern Lab</div>
-    <h1>Find Your Instinctive Pattern</h1>
-    <p>Eighteen statements about how people respond to change. You'll sort them quickly, then rank what's left. After that, eight short questions about how you prefer to work. The whole thing takes about five minutes and produces a personal pattern code.</p>
-    <button class="btn-primary" onclick="startPhase1()">Begin</button>
-    <p style="font-size:14px;color:var(--text-light);font-style:italic;max-width:460px;margin:0 auto;opacity:.8;">Every statement describes something a capable person genuinely does. The question is which ones you do readily — without needing a reason.</p>
-  </div>
-  <div id="phase1-screen" class="hidden"></div>
-  <div id="phase2-screen" class="hidden"></div>
-  <div id="phase3-screen" class="hidden"></div>
-  <div id="results-screen" class="hidden"></div>
-</div>
-
+<div class="wrap" id="app"></div>
 <script>
-// === DATA ===
-const statements = [
-  { id:"A1", instinct:"A", text:"I check whether the information I have is true or accurate." },
-  { id:"A2", instinct:"A", text:"I ask questions until I'm certain I have the full story." },
-  { id:"A3", instinct:"A", text:"I examine the details to make sure everything adds up." },
-  { id:"L1", instinct:"L", text:"I think about what I'm really facing." },
-  { id:"L2", instinct:"L", text:"I take a look at the bigger picture." },
-  { id:"L3", instinct:"L", text:"I assess the consequences of stepping in." },
-  { id:"P1", instinct:"P", text:"I imagine how things could be changed." },
-  { id:"P2", instinct:"P", text:"I respond with some ideas on how to handle things." },
-  { id:"P3", instinct:"P", text:"I outline an approach that should work." },
-  { id:"R1", instinct:"R", text:"I toss an imaginary coin and follow my gut reaction." },
-  { id:"R2", instinct:"R", text:"I weigh the alternatives carefully before committing myself." },
-  { id:"R3", instinct:"R", text:"If I see a new path open, I'll commit to it before the opportunity closes." },
-  { id:"I1", instinct:"I", text:"I use some resources and build while I have the chance." },
-  { id:"I2", instinct:"I", text:"When one path closes, another opens. I'll find it and take it." },
-  { id:"I3", instinct:"I", text:"I seize the opportunity to make headway somewhere else." },
-  { id:"M1", instinct:"M", text:"I stick with tried and true routines." },
-  { id:"M2", instinct:"M", text:"I adjust course if needed; I need to finish what's been started." },
-  { id:"M3", instinct:"M", text:"I stay on task and ignore the distractions." }
+"use strict";
+/* ============================= ITEM DATA ============================= */
+const INSTINCT = [
+ ["A1","A","check that the details you have are accurate"],
+ ["A2","A","take stock of how things actually stand"],
+ ["A3","A","compare how things are with how they ought to be"],
+ ["L1","L","think through where this leads if nothing changes"],
+ ["L2","L","work out what this tells you about the bigger picture"],
+ ["L3","L","piece together how things came to be this way"],
+ ["P1","P","imagine how it could be different"],
+ ["P2","P","adapt what worked elsewhere to fit this"],
+ ["P3","P","sketch out the steps a plan would need"],
+ ["R1","R","settle on one way forward and set any alternatives aside"],
+ ["R2","R","decide which of the available options should be done first"],
+ ["R3","R","commit to a course while things are still unclear"],
+ ["I1","I","make a start with whatever is to hand"],
+ ["I2","I","get something small going to create momentum"],
+ ["I3","I","get moving straight away rather than wait for the right conditions"],
+ ["M1","M","put back on track whatever has slipped"],
+ ["M2","M","ensure that anything going well continues"],
+ ["M3","M","look after whatever it all depends on"]
+].map(([id,g,text])=>({id,g,text}));
+
+const VIM = [
+ ["SF1","SF","I want life to feel steady and safe."],
+ ["SF2","SF","I want those closest to me safe and provided for."],
+ ["SV1","SV","I want calm when life feels overwhelming."],
+ ["SV2","SV","I want room in life for rest, fun and a few luxuries."],
+ ["EI1","EI","I want to be myself, without editing who I am."],
+ ["EI2","EI","I want my view heard as my own, not folded into anyone else's."],
+ ["EA1","EA","I want control over my actions and their consequences."],
+ ["EA2","EA","I want to stand on my own, setting my own course."],
+ ["CP1","CP","I want to learn things I've never tried before."],
+ ["CP2","CP","I want to stretch beyond what I already know."],
+ ["CC1","CC","I want to see my skills produce dependable performance."],
+ ["CC2","CC","I want to sharpen the quality of my work."],
+ ["AE1","AE","I want my results to keep improving."],
+ ["AE2","AE","I want to get things done well, without wasted effort."],
+ ["AR1","AR","I want to know my work truly counts."],
+ ["AR2","AR","I want recognition from the people close to my work."],
+ ["BR1","BR","I want deep, lasting friendships built on trust."],
+ ["BR2","BR","I want strong ties to the groups I care about."],
+ ["BS1","BS","I want to protect our shared history and traditions."],
+ ["BS2","BS","I want to care for the places and things we all depend on."],
+ ["UI1","UI","I want people to count on one another."],
+ ["UI2","UI","I want to treat everyone with gratitude and fairness."],
+ ["UB1","UB","I want to serve something larger than myself."],
+ ["UB2","UB","I want the whole to work, not just my part of it."]
+].map(([id,g,text])=>({id,g,text}));
+
+const LEAN = [
+ {code:"STC1", instinct:"Initiating", situation:"When everyone's ready to go but nothing's actually started yet…", opts:[
+   ["S","There's no waiting for me — I crack on with it."],
+   ["T","I get others onto it at once."],
+   ["C","I fall in with the rest and we make a start together."]]},
+ {code:"STC2", instinct:"Resolving", situation:"When you're faced with several possible ways forward and one has to be picked…", opts:[
+   ["S","I size it up on my own and pick what feels right."],
+   ["T","I set the direction and bring others behind it."],
+   ["C","I say my piece, as does anyone who wants to be heard, and we toss it about until we agree."]]},
+ {code:"STC3", instinct:"Authenticating", situation:"When you need to be sure whether something is actually true or correct…", opts:[
+   ["S","Left to myself, I check it out and draw my own conclusion."],
+   ["T","I have others check it properly before anything's settled."],
+   ["C","I join an impromptu jury and we weigh the evidence together."]]},
+ {code:"STC4", instinct:"Luminating", situation:"When something's happened and its significance isn't clear yet…", opts:[
+   ["S","I sit with it, alone, till I understand what it means."],
+   ["T","I point out what it means so others can see it too."],
+   ["C","I join the debate until it clicks for all of us."]]},
+ {code:"STC5", instinct:"Proposing", situation:"When the usual options don't fit anymore and new ones are needed…", opts:[
+   ["S","I think up my own alternative and run with it."],
+   ["T","I prompt others to come up with something different."],
+   ["C","A few of us get together and bounce some ideas around."]]},
+ {code:"STC6", instinct:"Maintaining", situation:"When early enthusiasm has faded but the work still isn't finished…", opts:[
+   ["S","I push through it, on my own steam, till it's done."],
+   ["T","I keep others at it so the effort doesn't drop off."],
+   ["C","I stay alongside whoever is still in and we see it through."]]}
 ];
 
-const engageQuestions = [
-  { context:"When something needs doing and you're free to choose how...",
-    options:[
-      {text:"I handle it myself with what I have.", style:"S"},
-      {text:"I encourage someone capable to take it on.", style:"T"},
-      {text:"I get together with others and we work it out.", style:"C"}
-    ]},
-  { context:"When progress stalls...",
-    options:[
-      {text:"I dig in and push through on my own.", style:"S"},
-      {text:"I motivate others to keep going — remind them why it matters.", style:"T"},
-      {text:"I call people together to find a way through collectively.", style:"C"}
-    ]},
-  { context:"When a problem needs solving...",
-    options:[
-      {text:"I think it through privately until I see a way.", style:"S"},
-      {text:"I share my thinking with someone and persuade them to act on it.", style:"T"},
-      {text:"I work through it with others, combining what we each bring.", style:"C"}
-    ]},
-  { context:"When something important needs protecting...",
-    options:[
-      {text:"I take personal responsibility for it.", style:"S"},
-      {text:"I make sure someone understands what's at stake and backs it.", style:"T"},
-      {text:"I rally shared ownership so we all look after it.", style:"C"}
-    ]},
-  { context:"When a new direction becomes clear...",
-    options:[
-      {text:"I start acting on it immediately, using my own resources.", style:"S"},
-      {text:"I inspire others to see the possibility and get behind it.", style:"T"},
-      {text:"I bring people together to move on it as a group.", style:"C"}
-    ]},
-  { context:"When standards are slipping...",
-    options:[
-      {text:"I quietly raise my own effort to compensate.", style:"S"},
-      {text:"I champion what good looks like so others raise their game.", style:"T"},
-      {text:"I raise it with the group so we address it together.", style:"C"}
-    ]},
-  { context:"When there's an opportunity worth pursuing...",
-    options:[
-      {text:"I go after it independently.", style:"S"},
-      {text:"I talk someone into going for it if I think it would suit them.", style:"T"},
-      {text:"I propose we pursue it together.", style:"C"}
-    ]},
-  { context:"When something needs to be communicated...",
-    options:[
-      {text:"I work it out in my own head first.", style:"S"},
-      {text:"I find the right person and help them see what I see.", style:"T"},
-      {text:"I open a conversation so we arrive at shared understanding.", style:"C"}
-    ]}
+const COH_SORT = [
+ ["P1","Work is generally satisfying.",null],
+ ["P2","I'm mostly free to go about things my own way.",null],
+ ["S3","Work doesn't give me the things that matter.","Support"],
+ ["P4","Most days, things flow well.",null],
+ ["S2","I'm often not free to go about things the way I'd choose.","Expression"],
+ ["P3","Work gives me plenty that matters.",null],
+ ["S4","Things don't always flow; something's not right.","Felt-state"]
+];
+const COH_E = [
+ ["E1","New ideas aren't wanted here — there's no room for suggesting how things could be different."],
+ ["E2","Decisions about which way to go get made without me."],
+ ["E3","There's no appetite for getting things off the ground here."],
+ ["E4","Not enough attention is paid to keeping everything running."],
+ ["E5","Accuracy doesn't count for much here."],
+ ["E6","No one seems to stop and make sense of things here."],
+ ["E7","My role requires more teamwork than suits me."],
+ ["E9","I could get a lot more done through other people if I were given the chance."],
+ ["E8","I'd like to work with others more than I can right now."],
+ ["E10","This role keeps asking me for things that don't come naturally."]
+];
+const COH_V = [["V1","The work isn't meaningful."],["V2","Working here, I'm going against my principles."]];
+const COH_F = [
+ ["F1","I'm not inspired working here.","Coasting"],
+ ["F2","Whatever I give my time to, I feel I'm neglecting something else that matters.","Hesitant"],
+ ["F3","I do what's asked and nothing beyond — I used to give extra, and I've stopped.","Minimalist"],
+ ["F4","I'm stretched right now — I don't have any more to give.","Depleted"],
+ ["F5","I'll keep doing it my way — is there any other way?","Fixated"]
 ];
 
-const cycle = ['A','L','P','R','I','M'];
-const instinctMeta = {
-  A:{name:"Verifying",color:"#D33A2C"},
-  L:{name:"Illuminating",color:"#7C4BB3"},
-  P:{name:"Ideating",color:"#2B6FD0"},
-  R:{name:"Committing",color:"#1F8A4C"},
-  I:{name:"Starting",color:"#9A7A1C"},
-  M:{name:"Shepherding",color:"#7A3F1D"}
-};
-const tendencies = {
-  A:"test what's actually true before acting on it",
-  L:"make sense of things until the whole picture becomes visible",
-  P:"see ways forward that others haven't considered",
-  R:"resolve uncertainty into a definite direction",
-  I:"turn decided plans into tangible reality",
-  M:"keep what matters steady, tended, and looked after"
-};
+const PARTS = ["intro","instinct","lean","vim","coherence","done"];
+const PARTLABEL = {instinct:"Instinct",lean:"Lean",vim:"VIM",coherence:"Coherence"};
 
-// === STATE ===
-let shuffled=[], sortIdx=0, liked=[];
-let remaining=[], removed=[], ranked=[];
-let engageIdx=0, engageStep=0, engageScores={S:0,T:0,C:0}, engageCurrent=[], engageRankings=[];
-const focusWeights = [16,13,11,9,8,7,6,5];
-
-// === PHASE 1: SORT ===
-// sortMode: 'discard' = first pass removing rarely done, 'rescue' = reviewing discards to add more, 'narrow' = reviewing keeps to remove more
-let sortMode='discard', discarded=[];
-
-function startPhase1(){
-  document.getElementById('intro').classList.add('hidden');
-  document.getElementById('phase1-screen').classList.remove('hidden');
-  shuffled=[...statements].sort(()=>Math.random()-.5);
-  sortIdx=0; liked=[]; discarded=[]; sortMode='discard';
-  renderSort();
-}
-
-function renderSort(){
-  const s=document.getElementById('phase1-screen');
-  
-  // Check if we've hit 9
-  if(liked.length===9){ startPhase2(); return; }
-  // Check if we've run out of cards
-  if(sortIdx>=shuffled.length){ handlePassComplete(); return; }
-  
-  const st=shuffled[sortIdx], total=shuffled.length;
-  
-  let instructionTitle, instructionDesc, instructionColor;
-  if(sortMode==='discard'){
-    instructionTitle="Each statement describes things you probably do. You might do them readily. You might do them rarely.";
-    instructionDesc="Discard the things you do rarely. Keep the things you do readily.";
-    instructionColor='var(--text)';
-  } else if(sortMode==='rescue'){
-    const need=9-liked.length;
-    instructionTitle=`You kept ${liked.length} — we need ${need} more to reach 9.`;
-    instructionDesc="Here are the ones you discarded. Some might be things you do more readily than you first thought.";
-    instructionColor='var(--yes-border)';
-  } else if(sortMode==='narrow'){
-    const excess=liked.length + (total-sortIdx) - 9;
-    instructionTitle=`You've kept too many — we need to get down to 9.`;
-    instructionDesc=`Discard the ones you do least readily. We'll stop as soon as you have 9.`;
-    instructionColor='var(--no-border)';
-  }
-  
-  s.innerHTML=`
-    <div class="phase-block" style="border-color:${instructionColor}22;">
-      <div class="phase-title" style="color:${instructionColor}">${instructionTitle}</div>
-      <div class="phase-desc">${instructionDesc}</div>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" style="width:${(sortIdx/total)*100}%"></div></div>
-    <div class="sort-card">
-      <div style="font-size:14px;color:var(--accent);margin-bottom:12px;font-weight:500;">When circumstances produce change, what do you do?</div>
-      <div class="statement">"${st.text}"</div>
-      <div style="font-size:13px;color:var(--text-light);margin-bottom:16px;">Go with your first reaction.</div>
-      <div class="sort-buttons">
-        <button class="btn-sort btn-unlike" onclick="sortResp(false)">I rarely do this — Discard</button>
-        <button class="btn-sort btn-like" onclick="sortResp(true)">I readily do this — Keep</button>
-      </div>
-    </div>
-    <div class="sort-counter">${liked.length} kept · need 9</div>`;
-}
-
-function sortResp(yes){
-  const st=shuffled[sortIdx];
-  if(yes){
-    liked.push(st);
-  } else {
-    if(sortMode==='discard') discarded.push(st);
-  }
-  sortIdx++;
-  
-  // Immediate check — have we hit 9?
-  if(liked.length===9){ startPhase2(); return; }
-  
-  renderSort();
-}
-
-function handlePassComplete(){
-  if(liked.length===9){ startPhase2(); return; }
-  
-  if(liked.length<9){
-    // Need more — show discarded ones for rescue
-    sortMode='rescue';
-    shuffled=[...discarded].sort(()=>Math.random()-.5);
-    discarded=[];
-    sortIdx=0;
-    document.getElementById('phase1-screen').innerHTML=`
-      <div class="phase-block" style="border-color:var(--yes-border)22;">
-        <div class="phase-title" style="color:var(--yes-border)">You kept ${liked.length} — we need at least 9.</div>
-        <div class="phase-desc">Let's go through the ones you discarded. Keep a few more — we'll stop as soon as you reach 9.</div>
-      </div>
-      <button class="btn-primary" onclick="renderSort()" style="margin-top:16px">Continue</button>`;
-    return;
-  }
-  
-  if(liked.length>9){
-    // Need fewer — show kept ones for narrowing
-    sortMode='narrow';
-    const keptCount=liked.length;
-    shuffled=[...liked].sort(()=>Math.random()-.5);
-    liked=[];
-    sortIdx=0;
-    document.getElementById('phase1-screen').innerHTML=`
-      <div class="phase-block" style="border-color:var(--no-border)22;">
-        <div class="phase-title" style="color:var(--no-border)">You kept ${keptCount} — we need to narrow to 9.</div>
-        <div class="phase-desc">You'll see your kept statements again. Discard the ones you do least readily. We'll stop as soon as you reach 9.</div>
-      </div>
-      <button class="btn-primary" onclick="renderSort()" style="margin-top:16px">Continue</button>`;
-    return;
-  }
-}
-
-// === PHASE 2: REVERSE RANK ===
-function startPhase2(){
-  document.getElementById('phase1-screen').classList.add('hidden');
-  document.getElementById('phase2-screen').classList.remove('hidden');
-  remaining=[...liked].sort(()=>Math.random()-.5);
-  removed=[]; ranked=[];
-  startRanking();
-}
-
-function startRanking(){ removed=[]; renderRank(); }
-function renderRank(){
-  const s=document.getElementById('phase2-screen');
-  const rem=remaining.length, gone=removed.length, target=8;
-  if(gone>=target||rem<=1){ finaliseRank(); return; }
-  const prompt=gone===0?'Which of these do you do <span style="color:var(--no-border);font-weight:600;">least</span> readily?'
-    :rem>4?'Of the rest — which do you do <span style="color:var(--no-border);font-weight:600;">least</span>?'
-    :rem>2?'Getting closer — which is <span style="color:var(--no-border);font-weight:600;">next to go</span>?'
-    :'Last call — which of these two is <span style="color:var(--no-border);font-weight:600;">weaker</span>?';
-  s.innerHTML=`
-    <div class="phase-block">
-      <div class="phase-title" style="color:var(--no-border);">Rank by elimination — remove the weakest.</div>
-      <div class="phase-desc">${prompt} Tap it to remove. What remains reveals your pattern.</div>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" style="width:${(gone/target)*100}%"></div></div>
-    <div class="sort-counter">${rem} remaining</div>
-    <div class="rank-options">${remaining.map((st,i)=>`
-      <div class="rank-option" onclick="removeWeakest(${i})">${st.text}</div>`).join('')}
-    </div>`;
-}
-function removeWeakest(i){
-  removed.push(remaining.splice(i,1)[0]);
-  renderRank();
-}
-function finaliseRank(){
-  ranked=[];
-  if(remaining.length===1) ranked.push(remaining[0]);
-  for(let i=removed.length-1;i>=0;i--) ranked.push(removed[i]);
-  startPhase3();
-}
-
-// === PHASE 3: ENGAGEMENT STYLE ===
-function startPhase3(){
-  document.getElementById('phase2-screen').classList.add('hidden');
-  document.getElementById('phase3-screen').classList.remove('hidden');
-  engageIdx=0; engageStep=0;
-  engageScores={S:0,T:0,C:0};
-  engageRankings=[];
-  showEngageIntro();
-}
-
-function showEngageIntro(){
-  document.getElementById('phase3-screen').innerHTML=`
-    <div class="phase-block">
-      <div class="phase-title" style="color:var(--accent);">Part Two: How do you prefer to act?</div>
-      <div class="phase-desc">You've identified what you instinctively do. Now we'll look at <em>how</em> you prefer to do it — on your own, through others, or together with others. Eight short questions, two choices each. This takes about a minute.</div>
-    </div>
-    <button class="btn-primary" onclick="renderEngage()" style="margin-top:16px">Continue</button>`;
-}
-
-function renderEngage(){
-  const s=document.getElementById('phase3-screen');
-  if(engageIdx>=engageQuestions.length){ showResults(); return; }
-  const q=engageQuestions[engageIdx];
-  if(engageStep===0){
-    engageCurrent=[...q.options].sort(()=>Math.random()-.5);
-  }
-  const prompt=engageStep===0
-    ?"Which of these three is most like you?"
-    :"And of these two?";
-  const qNum=engageIdx+1;
-  const qTotal=engageQuestions.length;
-  s.innerHTML=`
-    <div class="phase-block">
-      <div class="phase-title" style="color:var(--accent);">Engagement Style — Question ${qNum} of ${qTotal}</div>
-      <div class="phase-desc">Same situation, different approaches. Pick the one closest to how you'd actually do it.</div>
-    </div>
-    <div class="progress-bar"><div class="progress-fill" style="width:${(engageIdx/qTotal)*100}%"></div></div>
-    <div style="font-size:16px;color:var(--accent);margin-bottom:12px;font-weight:500;">${q.context}</div>
-    <div style="font-size:14px;color:var(--text-light);margin-bottom:12px;">${prompt}</div>
-    <div class="rank-options">${engageCurrent.map((o,i)=>`
-      <div class="rank-option" onclick="engagePick(${i})">${o.text}</div>`).join('')}
-    </div>`;
-}
-
-function engagePick(i){
-  if(engageStep===0){
-    // First pick = 3 points
-    engageScores[engageCurrent[i].style]+=3;
-    engageCurrent.splice(i,1);
-    engageStep=1;
-    renderEngage();
-  } else {
-    // Second pick = 2 points, remaining = 1 point
-    engageScores[engageCurrent[i].style]+=2;
-    const leftover=engageCurrent[1-i];
-    engageScores[leftover.style]+=1;
-    engageIdx++; engageStep=0;
-    renderEngage();
-  }
-}
-
-// === SCORING ===
-function cycDist(a,b){ return (cycle.indexOf(b)-cycle.indexOf(a)+6)%6; }
-function getArc(t,d){
-  const fi=cycle.indexOf(t), dist=cycDist(t,d), arc=[];
-  for(let s=0;s<=dist;s++) arc.push(cycle[(fi+s)%6]);
-  return arc;
-}
-
-function scoreDrive(){
-  const scores={A:0,L:0,P:0,R:0,I:0,M:0};
-  const counts={A:0,L:0,P:0,R:0,I:0,M:0};
-  const positions={}; cycle.forEach(k=>positions[k]=[]);
-  const top3=[];
-  ranked.forEach((st,i)=>{
-    if(i<focusWeights.length){
-      scores[st.instinct]+=focusWeights[i];
-      counts[st.instinct]++;
-      positions[st.instinct].push(i+1);
-      if(i<3) top3.push(st.instinct);
-    }
-  });
-  const sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
-  const pairs=Object.entries(counts).filter(([k,v])=>v>=2).map(([k])=>k);
-  const trios=Object.entries(counts).filter(([k,v])=>v>=3).map(([k])=>k);
-
-  let cap=null, influencers=[], ambiguous=false;
-
-  // Trio rule
-  if(trios.length>=1){
-    const tri=trios[0];
-    const otherPairs=pairs.filter(p=>p!==tri);
-    let otherTop4=false;
-    otherPairs.forEach(p=>{ if(positions[p].some(pos=>pos<=4)) otherTop4=true; });
-    if(otherPairs.length===0||!otherTop4){
-      cap={trigger:tri,driver:tri,arc:[tri]};
-    } else {
-      const os={...scores}; os[tri]=0;
-      const next=Object.entries(os).sort((a,b)=>b[1]-a[1])[0][0];
-      cap=resolveArc(next,tri,scores,true);
-    }
-  }
-
-  // Two pairs
-  if(!cap&&pairs.length>=2){
-    const ps=pairs.sort((a,b)=>scores[b]-scores[a]);
-    cap=resolveArc(ps[0],ps[1],scores,false);
-  }
-  // One pair + single
-  if(!cap&&pairs.length===1){
-    const p=pairs[0], best=sorted.find(([k])=>k!==p&&scores[k]>0);
-    if(best) cap=resolveArc(p,best[0],scores,false);
-  }
-  // Top two by score
-  if(!cap&&sorted[0][1]>0&&sorted[1][1]>0){
-    cap=resolveArc(sorted[0][0],sorted[1][0],scores,false);
-  }
-
-  if(cap&&cap.arc&&cap.arc.length>4){ ambiguous=true; cap=null; }
-
-  // Scattered top 3 check
-  const uTop3=[...new Set(top3)];
-  if(uTop3.length===3){
-    let contig=0;
-    for(let i=0;i<3;i++) for(let j=i+1;j<3;j++){
-      const d1=cycDist(uTop3[i],uTop3[j]), d2=cycDist(uTop3[j],uTop3[i]);
-      if(Math.min(d1,d2)<=2) contig++;
-    }
-    if(contig===0){ ambiguous=true; cap=null; }
-  }
-
-  // Influencers
-  if(cap) top3.forEach(inst=>{
-    if(!cap.arc.includes(inst)&&!influencers.includes(inst)) influencers.push(inst);
-  });
-
-  return {cap, ambiguous, influencers, scores, sorted, counts};
-}
-
-function resolveArc(a,b,scores,trioIsB){
-  if(a===b) return {trigger:a,driver:a,arc:[a]};
-  const df=cycDist(a,b), dr=cycDist(b,a);
-  if(df===3&&dr===3){
-    const arcAB=getArc(a,b), arcBA=getArc(b,a);
-    let sAB=0,sBA=0;
-    arcAB.forEach(k=>{if(k!==a&&k!==b) sAB+=scores[k];});
-    arcBA.forEach(k=>{if(k!==a&&k!==b) sBA+=scores[k];});
-    if(trioIsB) return {trigger:a,driver:b,arc:arcAB};
-    if(sAB>sBA) return {trigger:a,driver:b,arc:arcAB};
-    if(sBA>sAB) return {trigger:b,driver:a,arc:arcBA};
-    if(scores[b]>scores[a]) return {trigger:a,driver:b,arc:arcAB};
-    if(scores[a]>scores[b]) return {trigger:b,driver:a,arc:arcBA};
-    return {trigger:a,driver:b,arc:arcAB,ambiguousDirection:true};
-  }
-  if(df<=4&&df<=dr) return {trigger:a,driver:b,arc:getArc(a,b)};
-  if(dr<=4) return {trigger:b,driver:a,arc:getArc(b,a)};
-  return null;
-}
-
-function scoreEngage(){
-  const {S,T,C}=engageScores;
-  const total=S+T+C; // should be 48
-  const sorted=Object.entries(engageScores).sort((a,b)=>b[1]-a[1]);
-  const hi=sorted[0], mid=sorted[1], lo=sorted[2];
-
-  // Check balanced
-  if(hi[1]-lo[1]<=4) return {code:"BE",desc:"Balanced engagement — all three styles clearly present"};
-
-  // Check single dominance: top is 8+ above second
-  if(hi[1]-mid[1]>=8) return {code:hi[0]+hi[0],desc:`Strongly ${styleName(hi[0])} — the other styles rarely feature`};
-
-  // Two-style
-  return {code:hi[0]+mid[0],desc:`Primarily ${styleName(hi[0])}, secondarily ${styleName(mid[0])}`};
-}
-
-function styleName(code){
-  return {S:"solo",T:"tovenly",C:"collaborative"}[code];
-}
-
-// === RESULTS ===
-function showResults(){
-  document.getElementById('phase3-screen').classList.add('hidden');
-  const screen=document.getElementById('results-screen');
-  screen.classList.remove('hidden');
-
-  const drive=scoreDrive();
-  const engage=scoreEngage();
-  const cap=drive.cap;
-
-  let driveCode='--', driverColor=instinctMeta.A.color, arcDesc='', patternNote='';
-
-  if(cap&&!drive.ambiguous){
-    driveCode=cap.trigger+cap.driver;
-    driverColor=instinctMeta[cap.driver].color;
-    const arcNames=cap.arc.map(k=>instinctMeta[k].name);
-
-    if(cap.trigger===cap.driver){
-      arcDesc=instinctMeta[cap.driver].name+' — triggering and driving';
-      patternNote=`One instinct dominated clearly: <em style="color:${driverColor}">${instinctMeta[cap.driver].name}</em>. It triggers your response and drives your sustained effort.`;
-    } else if(cap.ambiguousDirection){
-      arcDesc=instinctMeta[cap.trigger].name+' + '+instinctMeta[cap.driver].name+' — direction unclear';
-      patternNote=`Two instincts showed up with equal strength: <em>${instinctMeta[cap.trigger].name}</em> and <em>${instinctMeta[cap.driver].name}</em>. Which triggers and which drives would take a conversation to determine.`;
-    } else {
-      arcDesc=arcNames.join(' → ');
-      const dName=instinctMeta[cap.driver].name, tName=instinctMeta[cap.trigger].name;
-      if(cap.arc.length===2){
-        patternNote=`Your instinctive energy moves from <em style="color:${instinctMeta[cap.trigger].color}">${tName}</em> to <em style="color:${driverColor}">${dName}</em>. ${tName} fires first. ${dName} is where your sustained effort goes.`;
-      } else {
-        const mid=cap.arc.slice(1,-1).map(k=>'<em style="color:'+instinctMeta[k].color+'">'+instinctMeta[k].name+'</em>');
-        patternNote=`Your instinctive energy moves from <em style="color:${instinctMeta[cap.trigger].color}">${tName}</em> through ${mid.join(' and ')} to <em style="color:${driverColor}">${dName}</em>.`;
+/* ============================= HELPERS ============================= */
+function shuffle(a0){ const a=[...a0]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function shuffleNoAdjacentGroup(items){
+  let a=shuffle(items);
+  for(let pass=0;pass<10;pass++){
+    let ok=true;
+    for(let i=1;i<a.length;i++){
+      if(a[i].g===a[i-1].g){
+        ok=false;
+        for(let k=i+1;k<a.length;k++){
+          if(a[k].g!==a[i-1].g && (i+1>=a.length||a[k].g!==a[i+1].g)){[a[i],a[k]]=[a[k],a[i]];break;}
+        }
       }
     }
-  } else {
-    driveCode='--';
-    patternNote='Your responses were spread across non-adjacent instincts. The full picture needs a conversation.';
+    if(ok)break;
   }
+  return a;
+}
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const app=document.getElementById("app");
 
-  const fullCode=driveCode+'-'+engage.code;
-  const tendency=cap?tendencies[cap.driver]:'';
-
-  // Build arc name stack (vertical, below hexagon, each on its own line in colour)
-  let arcStackHTML='';
-  if(cap && !drive.ambiguous && cap.trigger!==cap.driver && !cap.ambiguousDirection){
-    arcStackHTML=cap.arc.map(k=>`<div style="color:${instinctMeta[k].color}">${instinctMeta[k].name}</div>`).join('');
-  } else if(cap && cap.trigger===cap.driver){
-    arcStackHTML=`<div style="color:${driverColor}">${instinctMeta[cap.driver].name}</div>`;
-  }
-
-  // Bars in cycle order centred on driver
-  const drvKey=cap?cap.driver:drive.sorted[0][0];
-  const di=cycle.indexOf(drvKey);
-  const barOrder=[];
-  for(let i=-3;i<=2;i++) barOrder.push(cycle[(di+i+6)%6]);
-  const maxBar=16+13+11;
-
-  let influencerHTML='';
-  if(drive.influencers.length>0&&cap&&!drive.ambiguous){
-    const names=drive.influencers.map(k=>`<em style="color:${instinctMeta[k].color}">${instinctMeta[k].name}</em>`);
-    influencerHTML=`<div class="influencer-note">Also noted: ${names.join(' and ')} appeared strongly but outside your main arc — an influencing tendency worth exploring.</div>`;
-  }
-
-  const copyText=`My Instinctive Signature: ${fullCode}${tendency?` — When it matters, tending to ${tendency}.`:''} Find yours at Primal.You`;
-
-  screen.innerHTML=`
-    <div class="results">
-      <div class="results-header">
-        <h2>Your Instinctive Signature</h2>
-        <p>Here's what emerged from your responses.</p>
-      </div>
-      <div class="result-card">
-        <div class="badge-section">
-          <div class="badge-hex">
-            <svg viewBox="0 0 240 276" xmlns="http://www.w3.org/2000/svg">
-              <polygon points="120,4 232,69 232,207 120,272 8,207 8,69" fill="${driverColor}" fill-opacity=".07" stroke="${driverColor}" stroke-width="2.5" opacity=".9"/>
-              <polygon points="120,18 220,76 220,200 120,258 20,200 20,76" fill="${driverColor}" fill-opacity=".04"/>
-            </svg>
-            <div class="badge-content">
-              <div class="badge-pre-top" style="color:${driverColor}">Your</div>
-              <div class="badge-pre-main" style="color:${driverColor}">Instinctive</div>
-              <div class="badge-pre-bot" style="color:${driverColor}">Signature</div>
-              <div class="badge-code" style="color:${driverColor}">${fullCode}</div>
-            </div>
-          </div>
-          ${arcStackHTML?`<div class="badge-arc-stack">${arcStackHTML}</div>`:''}
-          ${tendency?`<div style="font-size:16px;color:var(--text);margin-top:10px;max-width:400px;text-align:center;line-height:1.5;">When it matters, tending to <em style="color:${driverColor}">${tendency}</em>, more often than not.</div>`:''}
-          <div class="badge-url">Primal.You</div>
-        </div>
-
-        <div class="pattern-desc">${patternNote}</div>
-        ${influencerHTML}
-
-        <div class="instinct-bars">
-          ${barOrder.map(k=>`
-            <div class="instinct-row">
-              <span class="instinct-label" style="color:${instinctMeta[k].color}">${instinctMeta[k].name}</span>
-              <div class="instinct-track">
-                <div class="instinct-fill" data-width="${(drive.scores[k]/maxBar)*100}" style="background:${instinctMeta[k].color}"></div>
-              </div>
-            </div>`).join('')}
-        </div>
-
-        <div class="engage-result">
-          <div class="engage-result-label">Engagement Style</div>
-          <div style="font-size:15px;color:var(--text);line-height:1.55;">${engage.desc}</div>
-        </div>
-      </div>
-
-      <div class="actions">
-        <button class="btn-action" onclick="copyResult(this)" data-copy="${copyText.replace(/"/g,'&quot;')}">Copy my result</button>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="cta-section">
-        <p>This is your instinctive pattern — the direction your energy moves and how you prefer to deploy it.</p>
-        <p>The next layer is what it means: where it serves you, where it costs you, and the persistent sense that something either fits or doesn't.</p>
-        <p style="margin-top:14px;font-weight:500;">The full picture takes a conversation.</p>
-        <p style="margin-top:14px;font-size:14px;color:var(--text-light);">Screenshot your result and share it in <strong>The Pattern Lab</strong> community — then ask someone else what theirs would be.</p>
-        <p class="cta-subtle" style="margin-top:12px;">The Pattern Lab · Primal.You</p>
-      </div>
-    </div>`;
-
-  setTimeout(()=>{
-    document.querySelectorAll('.instinct-fill').forEach(bar=>{
-      bar.style.width=bar.dataset.width+'%';
-    });
-  },300);
+/* ============================= STATE ============================= */
+let S={};
+function reset(){
+  S={part:"intro", record:[]};
+  S.instinct=newRankState(shuffleNoAdjacentGroup(INSTINCT));
+  S.vim=newRankState(shuffleNoAdjacentGroup(VIM));
+  S.lean={order:shuffle(LEAN.map((s,i)=>i)), idx:0, picks:[]};
+  S.coh={sortOrder:COH_SORT, ticked:{}, branches:[], bIdx:0, bTicked:{}, showZeroPrompt:false};
+  render();
+}
+function newRankState(serve){
+  return {serve, idx:0, kept:[], out:[], stage:"sort",
+    placeQueue:[], placeIdx:0, shelves:[[],[],[]], cap:4, locked:[], history:[]};
 }
 
-function copyResult(btn){
-  const text=btn.getAttribute('data-copy');
-  navigator.clipboard.writeText(text).then(()=>{
-    btn.textContent='Copied!';
-    btn.classList.add('copied');
-    setTimeout(()=>{ btn.textContent='Copy my result'; btn.classList.remove('copied'); },2000);
-  });
+/* ============================= GENERIC RANK ENGINE (Instinct / VIM) ============================= */
+function rk(){ return S[S.part]; }
+
+function rankSortScreen(cfg){
+  const r=rk();
+  const item=r.serve[r.idx];
+  const qtext = cfg.terminalQ ? item.text+"?" : item.text;
+  return `${partHeader(cfg)}
+    <p class="progress">Statement ${r.idx+1} of ${r.serve.length}</p>
+    <p class="stem">"${cfg.stem}"</p>
+    <div class="card fadein">${esc(qtext)}</div>
+    <div class="btnrow">
+      <button class="primary" onclick="rankAnswer(true)">${cfg.yes}</button>
+      <button onclick="rankAnswer(false)">${cfg.no}</button>
+    </div>
+    ${r.history.length? `<div class="btnrow"><button class="ghost" onclick="rankUndoSort()">Undo last</button></div>`:""}`;
 }
+window.rankAnswer=(keep)=>{
+  const r=rk(); const it=r.serve[r.idx];
+  (keep?r.kept:r.out).push(it); r.history.push(keep); r.idx++;
+  render();
+};
+window.rankUndoSort=()=>{
+  const r=rk(); if(!r.history.length)return;
+  const keep=r.history.pop(); r.idx--; (keep?r.kept:r.out).pop(); render();
+};
+
+function rankTrimScreen(cfg){
+  const r=rk();
+  const over = r.kept.length > cfg.trimHigh;
+  return `${partHeader(cfg)}
+    <div class="banner">${cfg.trimMsg(r.kept.length)}</div>
+    ${r.kept.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+       <div class="mini"><button onclick="rankTrimSetAside(${i})">Set aside</button></div></div>`).join("")}
+    <div class="btnrow"><button class="primary" onclick="rankFinishTrim()">Continue (${r.kept.length} kept)</button></div>`;
+}
+window.rankTrimSetAside=(i)=>{ const r=rk(); r.out.push(r.kept.splice(i,1)[0]); render(); };
+window.rankFinishTrim=()=>{ startPlace(); };
+
+function rankZeroLowScreen(cfg){
+  // 0 kept (VIM only) or very low kept: gentle prompt / proceed
+  const r=rk();
+  if(cfg.zeroPrompt && r.kept.length===0 && !r.zeroHandled){
+    return `${partHeader(cfg)}
+      <div class="banner">${cfg.zeroPrompt}</div>
+      ${r.out.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+         <div class="mini"><button onclick="rankReclaim(${i})">Pick this one</button></div></div>`).join("")}
+      <div class="btnrow"><button onclick="rankZeroContinue()">Nothing pressing — continue</button></div>`;
+  }
+  return null;
+}
+window.rankReclaim=(i)=>{ const r=rk(); r.kept.push(r.out.splice(i,1)[0]); r.zeroHandled=true; startPlace(); };
+window.rankZeroContinue=()=>{
+  const r=rk(); r.zeroHandled=true; r.recordedZero=true;
+  if(!r.recorded){ S.record.push(`VIM — declined: nothing kept as important right now`); r.recorded=true; }
+  nextPart();
+};
+
+window.startPlace=()=>{
+  const r=rk();
+  const n=r.kept.length;
+  r.cap = Math.max(4, Math.ceil(n/3)+1);
+  r.placeQueue=shuffle(r.kept); r.placeIdx=0; r.shelves=[[],[],[]];
+  r.stage="place"; render();
+};
+
+function rankPlaceScreen(cfg){
+  const r=rk();
+  const item=r.placeQueue[r.placeIdx];
+  return `${partHeader(cfg)}
+    <p class="progress">Placing ${r.placeIdx+1} of ${r.placeQueue.length}</p>
+    <div class="card fadein">${esc(item.text)}</div>
+    <p class="note" style="margin-top:10px">${cfg.placePrompt}</p>
+    ${cfg.rowNames.map((name,si)=>{
+       const items=r.shelves[si]; const full=items.length>=r.cap;
+       return `<div class="shelfwrap" data-row="${si}">
+         <button class="shelf" data-full="${full?1:0}" ${full?"disabled":""} onclick="rankPlaceOn(${si})">
+           <div class="shelfhead"><span class="shelfname">${name}</span>
+             ${full?'<span class="full">Full</span>':`<span class="dots">${
+               Array.from({length:r.cap},(_,d)=>`<span class="dot ${d<items.length?"on":""}"></span>`).join("")}</span>`}
+           </div>
+         </button>
+         <div class="chips">${items.map(x=>`<button class="chipbtn" onclick="rankUnplace('${x.id}')">${esc(x.text)}</button>`).join("")}</div>
+       </div>`;}).join("")}
+    ${r.placeIdx>0? `<div class="btnrow"><button class="ghost" onclick="rankUndoPlace()">Undo last placement</button></div>`:""}`;
+}
+window.rankPlaceOn=(si)=>{
+  const r=rk(); if(r.shelves[si].length>=r.cap)return;
+  r.shelves[si].push(r.placeQueue[r.placeIdx]); r.placeIdx++; render();
+};
+window.rankUnplace=(id)=>{
+  const r=rk();
+  for(const sh of r.shelves){
+    const k=sh.findIndex(x=>x.id===id);
+    if(k>-1){
+      const it=sh.splice(k,1)[0];
+      const q=r.placeQueue.indexOf(it);
+      if(q>-1){ r.placeQueue.splice(q,1); if(q<r.placeIdx) r.placeIdx--; }
+      r.placeQueue.splice(r.placeIdx,0,it);
+      break;
+    }
+  }
+  render();
+};
+window.rankUndoPlace=()=>{
+  const r=rk(); if(r.placeIdx===0)return;
+  r.placeIdx--;
+  const it=r.placeQueue[r.placeIdx];
+  for(const sh of r.shelves){const k=sh.indexOf(it); if(k>-1){sh.splice(k,1);break;}}
+  render();
+};
+
+function rankReviewScreen(cfg){
+  const r=rk();
+  const placed=r.shelves[0].length+r.shelves[1].length+r.shelves[2].length;
+  const guard = placed!==r.kept.length
+    ? `<div class="banner warn">Placed ${placed} but ${r.kept.length} were kept — a statement is missing. Please restart this part.</div>
+       <div class="btnrow"><button class="primary" onclick="startPlace()">Restart placing</button></div>` : "";
+  return `${partHeader(cfg)}
+    <h2>Look it over</h2><p class="note">Move anything between rows.</p>
+    ${guard}
+    ${cfg.rowNames.map((name,si)=>`<p class="shelftitle">${name}</p>`+
+      r.shelves[si].map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+        <div class="mini">
+          <button ${si>0&&r.shelves[si-1].length<r.cap?"":"disabled"} onclick="rankMoveShelf(${si},${i},-1)">↑ row</button>
+          <button ${si<2&&r.shelves[si+1].length<r.cap?"":"disabled"} onclick="rankMoveShelf(${si},${i},1)">↓ row</button>
+        </div></div>`).join("")).join("")}
+    ${placed===r.kept.length?`<div class="btnrow"><button class="primary" onclick="startRefine()">These rows are right</button></div>`:""}`;
+}
+window.rankMoveShelf=(si,i,dir)=>{
+  const r=rk(); const tgt=si+dir;
+  if(tgt<0||tgt>2||r.shelves[tgt].length>=r.cap)return;
+  r.shelves[tgt].push(r.shelves[si].splice(i,1)[0]); render();
+};
+window.startRefine=()=>{ const r=rk(); r.refineShelf=0; r.locked=[]; r.stage="refine"; render(); };
+
+function rankRefineScreen(cfg){
+  const r=rk();
+  const si=r.refineShelf;
+  const done=r.locked.filter(x=>x.shelf===si);
+  const rest=r.shelves[si].filter(it=>!r.locked.some(l=>l.item===it));
+  const offset=r.locked.filter(x=>x.shelf<si).length;
+  return `${partHeader(cfg)}
+    <p class="progress">${cfg.rowNames[si]} — order it</p>
+    <p class="note">${cfg.refinePrompt}</p>
+    ${done.map((l,k)=>`<button class="pick" data-locked="1" disabled><span class="badge">${offset+k+1}</span>${esc(l.item.text)}</button>`).join("")}
+    ${rest.map(it=>`<button class="pick" onclick="rankLockPick(${si},'${it.id}')">${esc(it.text)}</button>`).join("")}`;
+}
+window.rankLockPick=(si,id)=>{
+  const r=rk(); const it=r.shelves[si].find(x=>x.id===id);
+  r.locked.push({shelf:si,item:it}); render();
+};
+
+function rankResultScreen(cfg){
+  const r=rk();
+  const order=r.locked.map(l=>l.item);
+  const scored=order.slice(0,cfg.scoreCount);
+  const code=cfg.buildCode? cfg.buildCode(scored): scored.map(x=>x.id).join(" ");
+  if(!r.recorded){
+    const rowsTxt=r.shelves.map((sh,i)=>`R${i+1}[${sh.map(x=>x.id).join(" ")}]`).join(" ");
+    const text=`${cfg.label} — order: ${order.map(x=>x.id).join(" ")} | rows: ${rowsTxt} | set aside: ${r.out.map(x=>x.id).join(" ")||"none"}`;
+    S.record.push(text); r.recorded=true;
+  }
+  return `${partHeader(cfg)}
+    <div class="banner">${cfg.label} complete.</div>
+    <div class="code" style="font-size:16px;letter-spacing:.08em">${esc(order.map(x=>x.id).join(" · "))}</div>
+    <p class="codesub">${order.length} ranked (top ${cfg.scoreCount} scored) · ${r.out.length} set aside${r.recordedZero?' · zero-kept, declined':''}</p>
+    <div class="btnrow"><button class="primary" onclick="nextPart()">Continue</button></div>`;
+}
+
+function partHeader(cfg){
+  const idx=PARTS.indexOf(S.part);
+  const pct = Math.round((idx/(PARTS.length-2))*100);
+  return `<div class="partlabel">${cfg.title}</div>
+    <div class="track"><div class="trackfill" style="width:${pct}%"></div></div>`;
+}
+
+function renderRank(cfg){
+  const r=rk();
+  if(r.stage==="sort"){
+    if(r.idx>=r.serve.length){
+      if(r.kept.length>cfg.trimHigh){ r.stage="trim"; }
+      else if(cfg.zeroPrompt && r.kept.length===0){ r.stage="zerocheck"; }
+      else { startPlace(); return; }
+      render(); return;
+    }
+    app.innerHTML=rankSortScreen(cfg); return;
+  }
+  if(r.stage==="zerocheck"){ app.innerHTML=rankZeroLowScreen(cfg); return; }
+  if(r.stage==="trim"){ app.innerHTML=rankTrimScreen(cfg); return; }
+  if(r.stage==="place"){
+    if(r.placeIdx>=r.placeQueue.length){ r.stage="review"; renderRank(cfg); return; }
+    app.innerHTML=rankPlaceScreen(cfg); return;
+  }
+  if(r.stage==="review"){ app.innerHTML=rankReviewScreen(cfg); return; }
+  if(r.stage==="refine"){
+    while(r.refineShelf<3 && r.shelves[r.refineShelf].length - r.locked.filter(x=>x.shelf===r.refineShelf).length<=1){
+      const si=r.refineShelf;
+      const rest=r.shelves[si].filter(it=>!r.locked.some(l=>l.item===it));
+      rest.forEach(it=>r.locked.push({shelf:si,item:it}));
+      r.refineShelf++;
+    }
+    if(r.refineShelf>=3){ r.stage="result"; renderRank(cfg); return; }
+    app.innerHTML=rankRefineScreen(cfg); return;
+  }
+  if(r.stage==="result"){ app.innerHTML=rankResultScreen(cfg); return; }
+}
+
+const INSTINCT_CFG={
+  title:"Instinct", stem:"When something has your attention, do you tend to…?",
+  yes:"Regularly", no:"Not regularly", terminalQ:true,
+  trimHigh:12, trimMsg:n=>`You kept ${n}. Set aside the ones you do least — down to twelve (or fewer, if you like).`,
+  rowNames:["Row 1 · Most regular","Row 2 · In between","Row 3 · Least regular"],
+  placePrompt:"Compared with the others you've kept, how regularly do you do this? Tap a row — or tap a placed statement to pull it back out.",
+  refinePrompt:"Of these, which do you do most? Tap it; then the next.",
+  scoreCount:8, label:"Instinct",
+  buildCode:(scored)=>scored.map(x=>x.g).join("")
+};
+const VIM_CFG={
+  title:"VIM", stem:"Is this important to you right now?",
+  yes:"Important right now", no:"Not so much", terminalQ:false,
+  trimHigh:15, trimMsg:n=>n>15?`Quite a few made the cut. Set aside the ones that matter least right now — down to fifteen.`:`${n} kept.`,
+  zeroPrompt:"Nothing pressing at the moment? If even one of these tugs, pick it — otherwise carry on.",
+  rowNames:["Row 1 · Matters most right now","Row 2 · In between","Row 3 · Matters least right now"],
+  placePrompt:"Compared with the others you've kept, how much does this matter right now? Tap a row — or tap a placed statement to pull it back out.",
+  refinePrompt:"Of these, which matters most? Tap it; then the next.",
+  scoreCount:9, label:"VIM",
+  buildCode:(scored)=>scored.map(x=>x.g).join(" ")
+};
+
+/* ============================= LEAN ============================= */
+function renderLean(){
+  const st=S.lean;
+  if(st.idx>=st.order.length){
+    if(!st.recorded){
+      const text="Lean — "+st.picks.map(p=>`${p.code}:1st=${p.first} 2nd=${p.second}`).join(" | ");
+      S.record.push(text); st.recorded=true;
+    }
+    return `${partHeader({title:"Lean"})}
+      <div class="banner">Lean complete.</div>
+      ${st.picks.map(p=>`<div class="res"><span class="badge2">${p.code.slice(3)}</span>1st ${p.first} · 2nd ${p.second}</div>`).join("")}
+      <div class="btnrow"><button class="primary" onclick="nextPart()">Continue</button></div>`;
+  }
+  const scenario=LEAN[st.order[st.idx]];
+  if(!st.curOrder || st._curIdx!==st.idx){ st.curOrder=shuffle(scenario.opts); st._curIdx=st.idx; st.first=null; st.second=null; }
+  const twopickMsg = !st.first ? "Pick two: your most likely response, then your second most likely."
+    : !st.second ? "Good — now tap your second most likely." : "Both picked. Tap Continue, or tap either to change it.";
+  return `${partHeader({title:"Lean"})}
+    <p class="progress">Situation ${st.idx+1} of ${LEAN.length}</p>
+    <p class="stem">"${esc(scenario.situation)}"</p>
+    <p class="note">Imagine others you could work with are available to call on or collaborate with. Which way would you naturally go?</p>
+    <p class="twopick">${twopickMsg}</p>
+    ${st.curOrder.map(([tag,text])=>{
+      const state = st.first===tag?"first":(st.second===tag?"second":"");
+      return `<button class="opt" data-state="${state}" onclick="leanPick('${tag}')">
+        ${state==="first"?'<span class="tag">Most likely</span>':state==="second"?'<span class="tag">Second most likely</span>':""}
+        ${esc(text)}</button>`;
+    }).join("")}
+    <div class="btnrow"><button class="primary" ${st.first&&st.second?"":"disabled"} onclick="leanCommit()">Continue</button></div>`;
+}
+window.leanPick=(tag)=>{
+  const st=S.lean;
+  if(st.first===tag){ st.first=st.second; st.second=null; render(); return; }
+  if(st.second===tag){ st.second=null; render(); return; }
+  if(!st.first){ st.first=tag; }
+  else if(!st.second){ st.second=tag; }
+  else { st.first=tag; st.second=null; }
+  render();
+};
+window.leanCommit=()=>{
+  const st=S.lean; const scenario=LEAN[st.order[st.idx]];
+  st.picks.push({code:scenario.code, instinct:scenario.instinct, first:st.first, second:st.second});
+  st.idx++; st.curOrder=null; render();
+};
+
+/* ============================= COHERENCE ============================= */
+function renderCoherence(){
+  const c=S.coh;
+  if(c.stage!=="branches" && c.stage!=="done"){
+    return renderCohSorter();
+  }
+  if(c.stage==="branches" && c.bIdx>=c.branches.length){ c.stage="done"; }
+  if(c.stage==="branches"){
+    return renderCohBranch();
+  }
+  if(c.stage==="done"){
+    const sortTicks=Object.keys(c.ticked).filter(k=>c.ticked[k]);
+    const branchTicks=Object.keys(c.bTicked).filter(k=>c.bTicked[k]);
+    if(!c.recorded){
+      const text=`Coherence — sorter: ${sortTicks.join(" ")||"none"} | branch items: ${branchTicks.join(" ")||"none"}`;
+      S.record.push(text); c.recorded=true;
+    }
+    return `${partHeader({title:"Coherence"})}
+      <div class="banner">Coherence complete.</div>
+      <p class="note">Sorter ticks: ${sortTicks.join(", ")||"none"}</p>
+      <p class="note">Branch ticks: ${branchTicks.join(", ")||"none"}</p>
+      <div class="btnrow"><button class="primary" onclick="nextPart()">Continue</button></div>`;
+  }
+}
+function renderCohSorter(){
+  const c=S.coh;
+  const anyTicked=Object.values(c.ticked).some(v=>v);
+  return `${partHeader({title:"Coherence"})}
+    <h2>Your work, right now</h2>
+    <p class="note">Thinking about your current work — pick every statement that's true for you.</p>
+    ${COH_SORT.map(([id,text])=>`<label class="tick">
+      <input type="checkbox" ${c.ticked[id]?"checked":""} onchange="cohTickSort('${id}',this.checked)">
+      <span class="txt">${esc(text)}</span></label>`).join("")}
+    ${!anyTicked && c.showZeroPrompt? `<div class="banner">Nothing standing out right now? If even one feels true, tick it — otherwise continue.</div>`:""}
+    <div class="btnrow"><button class="primary" onclick="cohFinishSorter()">Continue</button></div>`;
+}
+window.cohTickSort=(id,val)=>{ S.coh.ticked[id]=val; render(); };
+window.cohFinishSorter=()=>{
+  const c=S.coh;
+  const anyTicked=Object.values(c.ticked).some(v=>v);
+  if(!anyTicked && !c.showZeroPrompt){ c.showZeroPrompt=true; render(); return; }
+  const order={"Expression":0,"Support":1,"Felt-state":2};
+  const routed=[];
+  for(const [id,,branch] of COH_SORT){ if(branch && c.ticked[id]) routed.push(branch); }
+  c.branches = [...new Set(routed)].sort((a,b)=>order[a]-order[b]);
+  c.bIdx=0; c.stage="branches"; render();
+};
+function branchItems(name){ return name==="Expression"?COH_E : name==="Support"?COH_V : COH_F; }
+function renderCohBranch(){
+  const c=S.coh; const name=c.branches[c.bIdx];
+  const items=branchItems(name);
+  const preamble = name==="Expression" ? "Pick everything that rings true." :
+                   name==="Support" ? "Pick everything that rings true." :
+                   "Pick everything that rings true.";
+  return `${partHeader({title:"Coherence"})}
+    <p class="progress">A few more statements</p>
+    <p class="note">${preamble}</p>
+    ${items.map(row=>{const id=row[0],text=row[1];
+      return `<label class="tick">
+        <input type="checkbox" ${c.bTicked[id]?"checked":""} onchange="cohTickBranch('${id}',this.checked)">
+        <span class="txt">${esc(text)}</span></label>`;}).join("")}
+    <div class="btnrow"><button class="primary" onclick="cohNextBranch()">Continue</button></div>`;
+}
+window.cohTickBranch=(id,val)=>{ S.coh.bTicked[id]=val; render(); };
+window.cohNextBranch=()=>{ S.coh.bIdx++; render(); };
+
+/* ============================= FLOW ============================= */
+function nextPart(){
+  const i=PARTS.indexOf(S.part);
+  S.part=PARTS[i+1];
+  render();
+}
+function render(){
+  if(S.part==="intro"){
+    app.innerHTML=`<h1>The Illuminator</h1><p class="note">Full-suite prototype — Instinct, Lean, VIM, Coherence in one sitting.</p>
+      <div class="banner">This link is for testing the mechanics end to end. Nothing is saved beyond this browser tab.</div>
+      <div class="spacer"></div>
+      <div class="btnrow"><button class="primary" onclick="nextPart()">Begin</button></div>`;
+    return;
+  }
+  if(S.part==="instinct"){ renderRank(INSTINCT_CFG); return; }
+  if(S.part==="lean"){ app.innerHTML=renderLean(); return; }
+  if(S.part==="vim"){ renderRank(VIM_CFG); return; }
+  if(S.part==="coherence"){ app.innerHTML=renderCoherence(); return; }
+  if(S.part==="done"){
+    const full=S.record.join("\n\n");
+    app.innerHTML=`<h1>The Illuminator</h1><div class="banner">All four parts complete. Full combined record below.</div>
+      <div class="btnrow"><button class="primary" onclick="copyAll(this)">Copy full record</button>
+      <button onclick="reset()">Run it again</button></div>
+      <textarea class="record" readonly id="fullrec"></textarea>`;
+    document.getElementById("fullrec").value=full;
+    return;
+  }
+}
+window.copyAll=(btn)=>{
+  const t=document.getElementById("fullrec");
+  const fallback=()=>{try{t.select();const ok=document.execCommand("copy");
+    btn.textContent=ok?"Copied ✓":"Copy failed — select the box below";}catch(e){btn.textContent="Copy failed — select the box below";}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t.value).then(()=>{btn.textContent="Copied ✓";}).catch(fallback);
+  } else fallback();
+};
+window.reset=reset;
+reset();
 </script>
 </body>
 </html>
