@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>The Illuminator — full suite prototype</title>
+<style>
+  :root{
+    --paper:#FAFAF7; --ink:#1C2321; --muted:#5C6663; --line:#DCDED8;
+    --petrol:#0F6B66; --petrol-soft:#E3EFED; --petrol-mid:#BFDAD6;
+    --amber:#B0752B; --card:#FFFFFF;
+    --row1bg:#BFD9D4; --row2bg:#DAEAE6; --row3bg:#EFF6F4;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);
+    font:17px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:480px;margin:0 auto;padding:20px 16px 40px;min-height:100vh;display:flex;flex-direction:column}
+  h1{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:22px;margin:0 0 2px}
+  h2{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:18px;margin:0 0 8px}
+  .stem{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:19px;margin:14px 0 6px}
+  .note{color:var(--muted);font-size:14.5px;margin:0 0 10px}
+  .progress{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:2px 0 12px}
+  .partlabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--petrol);font-weight:700;margin-bottom:2px}
+  .track{height:4px;background:var(--line);border-radius:2px;margin:2px 0 16px;overflow:hidden}
+  .trackfill{height:100%;background:var(--petrol);transition:width .25s}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 18px;font-size:19px;line-height:1.45;min-height:88px;display:flex;align-items:center;
+    box-shadow:0 1px 3px rgba(28,35,33,.06)}
+  .fadein{animation:fi .18s ease-out}
+  @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){.fadein{animation:none}}
+  .btnrow{display:flex;gap:10px;margin-top:14px}
+  button{font:inherit;border-radius:12px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);padding:15px 12px;min-height:56px;cursor:pointer;flex:1}
+  button:focus-visible{outline:3px solid var(--petrol);outline-offset:2px}
+  button.primary{background:var(--petrol);border-color:var(--petrol);color:#fff;font-weight:600}
+  button.ghost{background:none;border:none;color:var(--muted);text-decoration:underline;min-height:44px;flex:0 0 auto;padding:8px}
+  button:disabled{opacity:.45;cursor:default}
+  .shelf{border:1px solid var(--line);border-radius:12px 12px 0 0;background:var(--card);width:100%;text-align:left}
+  .shelf[data-full="1"]{opacity:.55;cursor:default}
+  .shelfhead{display:flex;justify-content:space-between;align-items:center;padding:12px 12px 10px}
+  .shelfname{font-weight:600;font-size:15px}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;max-width:120px;justify-content:flex-end}
+  .dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--muted);background:transparent}
+  .dot.on{background:var(--petrol);border-color:var(--petrol)}
+  .full{font-size:12px;color:var(--amber);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+  .shelfwrap{margin-top:10px}
+  .shelfwrap[data-row="0"] .shelf{background:var(--row1bg)}
+  .shelfwrap[data-row="1"] .shelf{background:var(--row2bg)}
+  .shelfwrap[data-row="2"] .shelf{background:var(--row3bg)}
+  .chips{display:flex;flex-direction:column;gap:4px;border:1px solid var(--line);border-top:none;
+    border-radius:0 0 12px 12px;padding:8px 10px;background:var(--card)}
+  .chips:empty{display:none}
+  .chipbtn{font:inherit;font-size:13px;color:var(--ink);background:none;border:1px solid var(--line);
+    border-radius:8px;padding:8px 10px;min-height:40px;text-align:left;cursor:pointer;width:100%}
+  .chipbtn::after{content:" \2715";color:var(--muted)}
+  .listcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:8px;
+    display:flex;gap:10px;align-items:flex-start}
+  .listcard .txt{flex:1;font-size:16px}
+  .mini{display:flex;flex-direction:column;gap:6px}
+  .mini button{min-height:40px;padding:6px 12px;font-size:14px;flex:0 0 auto}
+  .banner{background:var(--petrol-soft);border:1px solid var(--petrol-mid);border-radius:12px;padding:12px 14px;
+    font-size:15px;margin:10px 0}
+  .warn{background:#F6ECDC;border-color:#E4CFA8}
+  .pick{width:100%;text-align:left;margin-top:8px;font-size:16.5px;padding:16px 14px}
+  .pick .badge{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+    border-radius:50%;background:var(--petrol);color:#fff;font-size:13px;font-weight:700;margin-right:10px;flex:0 0 auto}
+  .pick[data-locked="1"]{background:var(--petrol-soft);border-color:var(--petrol-mid);cursor:default}
+  .res{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:10px 12px;margin-top:6px;font-size:14.5px}
+  .res.dim{opacity:.55}
+  .badge2{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;
+    border-radius:50%;background:var(--muted);color:#fff;font-size:12px;font-weight:700;flex:0 0 auto}
+  .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;letter-spacing:.22em;
+    background:var(--ink);color:#fff;border-radius:12px;padding:14px;text-align:center;margin:10px 0 4px}
+  .codesub{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:10px}
+  .spacer{flex:1}
+  .shelftitle{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:16px 0 2px}
+  .tick{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:14px;margin-top:8px;cursor:pointer}
+  .tick input{width:22px;height:22px;flex:0 0 auto}
+  .tick .txt{font-size:16px;flex:1}
+  .opt{width:100%;text-align:left;margin-top:8px;font-size:16.5px;padding:16px 14px}
+  .opt[data-state="first"]{background:var(--petrol);color:#fff;border-color:var(--petrol)}
+  .opt[data-state="second"]{background:var(--petrol-soft);border-color:var(--petrol-mid)}
+  .opt .tag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.85;display:block;margin-bottom:3px}
+  textarea.record{width:100%;min-height:110px;font:12.5px ui-monospace,Menlo,monospace;
+    border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--card);margin-top:8px}
+  .divider{border:none;border-top:1px solid var(--line);margin:22px 0}
+  .twopick{color:var(--amber);font-weight:700;font-size:15.5px;margin:2px 0 12px;
+    background:#FBF1E1;border:1px solid #E4CFA8;border-radius:10px;padding:9px 12px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+"use strict";
+/* ============================= ITEM DATA ============================= */
+const INSTINCT = [
+ ["A1","A","check that the details you have are accurate"],
+ ["A2","A","take stock of how things actually stand"],
+ ["A3","A","compare how things are with how they ought to be"],
+ ["L1","L","think through where this leads if nothing changes"],
+ ["L2","L","work out what this tells you about the bigger picture"],
+ ["L3","L","piece together how things came to be this way"],
+ ["P1","P","imagine how it could be different"],
+ ["P2","P","adapt what worked elsewhere to fit this"],
+ ["P3","P","sketch out the steps a plan would need"],
+ ["R1","R","settle on one way forward and set any alternatives aside"],
+ ["R2","R","decide which of the available options should be done first"],
+ ["R3","R","commit to a course while things are still unclear"],
+ ["I1","I","make a start with whatever is to hand"],
+ ["I2","I","get something small going to create momentum"],
+ ["I3","I","get moving straight away rather than wait for the right conditions"],
+ ["M1","M","put back on track whatever has slipped"],
+ ["M2","M","ensure that anything going well continues"],
+ ["M3","M","look after whatever it all depends on"]
+].map(([id,g,text])=>({id,g,text}));
+
+const VIM = [
+ ["SF1","SF","I want life to feel steady and safe."],
+ ["SF2","SF","I want those closest to me safe and provided for."],
+ ["SV1","SV","I want calm when life feels overwhelming."],
+ ["SV2","SV","I want room in life for rest, fun and a few luxuries."],
+ ["EI1","EI","I want to be myself, without editing who I am."],
+ ["EI2","EI","I want my view heard as my own, not folded into anyone else's."],
+ ["EA1","EA","I want control over my actions and their consequences."],
+ ["EA2","EA","I want to stand on my own, setting my own course."],
+ ["CP1","CP","I want to learn things I've never tried before."],
+ ["CP2","CP","I want to stretch beyond what I already know."],
+ ["CC1","CC","I want to see my skills produce dependable performance."],
+ ["CC2","CC","I want to sharpen the quality of my work."],
+ ["AE1","AE","I want my results to keep improving."],
+ ["AE2","AE","I want to get things done well, without wasted effort."],
+ ["AR1","AR","I want to know my work truly counts."],
+ ["AR2","AR","I want recognition from the people close to my work."],
+ ["BR1","BR","I want deep, lasting friendships built on trust."],
+ ["BR2","BR","I want strong ties to the groups I care about."],
+ ["BS1","BS","I want to protect our shared history and traditions."],
+ ["BS2","BS","I want to care for the places and things we all depend on."],
+ ["UI1","UI","I want people to count on one another."],
+ ["UI2","UI","I want to treat everyone with gratitude and fairness."],
+ ["UB1","UB","I want to serve something larger than myself."],
+ ["UB2","UB","I want the whole to work, not just my part of it."]
+].map(([id,g,text])=>({id,g,text}));
+
+const LEAN = [
+ {code:"STC1", instinct:"Initiating", situation:"When everyone's ready to go but nothing's actually started yet…", opts:[
+   ["S","There's no waiting for me — I crack on with it."],
+   ["T","I get others onto it at once."],
+   ["C","I fall in with the rest and we make a start together."]]},
+ {code:"STC2", instinct:"Resolving", situation:"When you're faced with several possible ways forward and one has to be picked…", opts:[
+   ["S","I size it up on my own and pick what feels right."],
+   ["T","I set the direction and bring others behind it."],
+   ["C","I say my piece, as does anyone who wants to be heard, and we toss it about until we agree."]]},
+ {code:"STC3", instinct:"Authenticating", situation:"When you need to be sure whether something is actually true or correct…", opts:[
+   ["S","Left to myself, I check it out and draw my own conclusion."],
+   ["T","I have others check it properly before anything's settled."],
+   ["C","I join an impromptu jury and we weigh the evidence together."]]},
+ {code:"STC4", instinct:"Luminating", situation:"When something's happened and its significance isn't clear yet…", opts:[
+   ["S","I sit with it, alone, till I understand what it means."],
+   ["T","I point out what it means so others can see it too."],
+   ["C","I join the debate until it clicks for all of us."]]},
+ {code:"STC5", instinct:"Proposing", situation:"When the usual options don't fit anymore and new ones are needed…", opts:[
+   ["S","I think up my own alternative and run with it."],
+   ["T","I prompt others to come up with something different."],
+   ["C","A few of us get together and bounce some ideas around."]]},
+ {code:"STC6", instinct:"Maintaining", situation:"When early enthusiasm has faded but the work still isn't finished…", opts:[
+   ["S","I push through it, on my own steam, till it's done."],
+   ["T","I keep others at it so the effort doesn't drop off."],
+   ["C","I stay alongside whoever is still in and we see it through."]]}
+];
+
+const COH_SORT = [
+ ["P1","Work is generally satisfying.",null],
+ ["P2","I'm mostly free to go about things my own way.",null],
+ ["S3","Work doesn't give me the things that matter.","Support"],
+ ["P4","Most days, things flow well.",null],
+ ["S2","I'm often not free to go about things the way I'd choose.","Expression"],
+ ["P3","Work gives me plenty that matters.",null],
+ ["S4","Things don't always flow; something's not right.","Felt-state"]
+];
+const COH_E = [
+ ["E1","New ideas aren't wanted here — there's no room for suggesting how things could be different."],
+ ["E2","Decisions about which way to go get made without me."],
+ ["E3","There's no appetite for getting things off the ground here."],
+ ["E4","Not enough attention is paid to keeping everything running."],
+ ["E5","Accuracy doesn't count for much here."],
+ ["E6","No one seems to stop and make sense of things here."],
+ ["E7","My role requires more teamwork than suits me."],
+ ["E9","I could get a lot more done through other people if I were given the chance."],
+ ["E8","I'd like to work with others more than I can right now."],
+ ["E10","This role keeps asking me for things that don't come naturally."]
+];
+const COH_V = [["V1","The work isn't meaningful."],["V2","Working here, I'm going against my principles."]];
+const COH_F = [
+ ["F1","I'm not inspired working here.","Coasting"],
+ ["F2","Whatever I give my time to, I feel I'm neglecting something else that matters.","Hesitant"],
+ ["F3","I do what's asked and nothing beyond — I used to give extra, and I've stopped.","Minimalist"],
+ ["F4","I'm stretched right now — I don't have any more to give.","Depleted"],
+ ["F5","I'll keep doing it my way — is there any other way?","Fixated"]
+];
+
+const PARTS = ["intro","instinct","lean","vim","coherence","done"];
+const PARTLABEL = {instinct:"Instinct",lean:"Lean",vim:"VIM",coherence:"Coherence"};
+
+/* ============================= HELPERS ============================= */
+function shuffle(a0){ const a=[...a0]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function shuffleNoAdjacentGroup(items){
+  let a=shuffle(items);
+  for(let pass=0;pass<10;pass++){
+    let ok=true;
+    for(let i=1;i<a.length;i++){
+      if(a[i].g===a[i-1].g){
+        ok=false;
+        for(let k=i+1;k<a.length;k++){
+          if(a[k].g!==a[i-1].g && (i+1>=a.length||a[k].g!==a[i+1].g)){[a[i],a[k]]=[a[k],a[i]];break;}
+        }
+      }
+    }
+    if(ok)break;
+  }
+  return a;
+}
+function buildRounds(items){
+  // groups items by .g, deals one shuffled member of every group per round
+  // (so a group's members are guaranteed spread one-per-round), shuffles
+  // order within each round, then fences any accidental same-group repeat
+  // that lands right across a round boundary.
+  const byGroup={};
+  items.forEach(it=>{ (byGroup[it.g]=byGroup[it.g]||[]).push(it); });
+  const groups=Object.keys(byGroup);
+  const k=Math.min(...groups.map(g=>byGroup[g].length));
+  groups.forEach(g=>{ byGroup[g]=shuffle(byGroup[g]); });
+  const rounds=[];
+  for(let ri=0; ri<k; ri++){
+    const round=shuffle(groups.map(g=>{ const it=byGroup[g][ri]; it.round=ri+1; return it; }));
+    rounds.push(round);
+  }
+  const flat=rounds.flat();
+  for(let b=1;b<rounds.length;b++){
+    const bi=b*groups.length;
+    if(flat[bi] && flat[bi-1] && flat[bi].g===flat[bi-1].g){
+      for(let m=bi+1;m<flat.length;m++){
+        if(flat[m].g!==flat[bi-1].g && (bi+1>=flat.length||flat[m].g!==flat[bi+1]?.g)){
+          [flat[bi],flat[m]]=[flat[m],flat[bi]]; break;
+        }
+      }
+    }
+  }
+  flat.forEach((it,i)=>{ it.serveIdx=i+1; });
+  return flat;
+}
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const app=document.getElementById("app");
+
+/* ============================= STATE ============================= */
+let S={};
+function reset(){
+  S={part:"intro", record:[]};
+  S.instinct=newRankState(buildRounds(INSTINCT));
+  S.vim=newRankState(buildRounds(VIM));
+  S.lean={order:shuffle(LEAN.map((s,i)=>i)), idx:0, picks:[]};
+  S.coh={sortOrder:COH_SORT, ticked:{}, branches:[], bIdx:0, bTicked:{}, showZeroPrompt:false};
+  render();
+}
+function newRankState(serve){
+  return {serve, idx:0, kept:[], out:[], stage:"sort",
+    placeQueue:[], placeIdx:0, shelves:[[],[],[]], cap:4, locked:[], history:[]};
+}
+
+/* ============================= GENERIC RANK ENGINE (Instinct / VIM) ============================= */
+function rk(){ return S[S.part]; }
+
+function rankSortScreen(cfg){
+  const r=rk();
+  const item=r.serve[r.idx];
+  const qtext = cfg.terminalQ ? item.text+"?" : item.text;
+  return `${partHeader(cfg)}
+    <p class="progress">Statement ${r.idx+1} of ${r.serve.length}</p>
+    <p class="stem">"${cfg.stem}"</p>
+    <div class="card fadein">${esc(qtext)}</div>
+    <div class="btnrow">
+      <button class="primary" onclick="rankAnswer(true)">${cfg.yes}</button>
+      <button onclick="rankAnswer(false)">${cfg.no}</button>
+    </div>
+    ${r.history.length? `<div class="btnrow"><button class="ghost" onclick="rankUndoSort()">Undo last</button></div>`:""}`;
+}
+window.rankAnswer=(keep)=>{
+  const r=rk(); const it=r.serve[r.idx];
+  (keep?r.kept:r.out).push(it); r.history.push(keep); r.idx++;
+  render();
+};
+window.rankUndoSort=()=>{
+  const r=rk(); if(!r.history.length)return;
+  const keep=r.history.pop(); r.idx--; (keep?r.kept:r.out).pop(); render();
+};
+
+function rankTrimScreen(cfg){
+  const r=rk();
+  const low = (cfg.scoreCount+1);
+  const atFloor = r.kept.length<=low;
+  return `${partHeader(cfg)}
+    <div class="banner">${cfg.trimMsg(r.kept.length)}</div>
+    ${atFloor? `<p class="note">That's as few as this part can score — the rest stay in.</p>`:""}
+    ${r.kept.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+       <div class="mini">${atFloor?`<button disabled>Set aside</button>`:`<button onclick="rankTrimSetAside(${i})">Set aside</button>`}</div></div>`).join("")}
+    <div class="btnrow"><button class="primary" onclick="rankFinishTrim()">Continue (${r.kept.length} kept)</button></div>`;
+}
+window.rankTrimSetAside=(i)=>{
+  const r=rk(); const cfg=S.part==="vim"?VIM_CFG:INSTINCT_CFG;
+  const low=(cfg.scoreCount+1);
+  if(r.kept.length<=low) return;   // floor reached — no further set-aside
+  r.out.push(r.kept.splice(i,1)[0]); render();
+};
+window.rankFinishTrim=()=>{ startPlace(); };
+
+function rankZeroLowScreen(cfg){
+  const r=rk();
+  const n=r.kept.length;
+  return `${partHeader(cfg)}
+    <div class="banner">${cfg.zeroPrompt}</div>
+    ${n>0? `<p class="note" style="margin-top:14px"><strong>Picked so far (${n}):</strong></p>
+      ${r.kept.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+         <div class="mini"><button onclick="rankUnreclaim(${i})">Remove</button></div></div>`).join("")}`:""}
+    ${r.out.length? `<p class="note" style="margin-top:14px">${n>0?"Anything else?":"Pick any that tug at you — as many as apply:"}</p>
+      ${r.out.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+         <div class="mini"><button onclick="rankReclaim(${i})">Pick this one</button></div></div>`).join("")}`:""}
+    <div class="btnrow">
+      ${n>0? `<button class="primary" onclick="rankZeroFinish()">Continue with ${n} picked</button>`
+            : `<button onclick="rankZeroContinue()">Nothing pressing — continue</button>`}
+    </div>`;
+}
+window.rankReclaim=(i)=>{ const r=rk(); r.kept.push(r.out.splice(i,1)[0]); r.zeroHandled=true; render(); };
+window.rankUnreclaim=(i)=>{ const r=rk(); r.out.push(r.kept.splice(i,1)[0]); render(); };
+window.rankZeroFinish=()=>{ const r=rk(); r.zeroHandled=true; startPlace(); };
+
+function rankTooFewScreen(cfg){
+  const r=rk(); const low=(cfg.scoreCount+1);
+  return `${partHeader(cfg)}
+    <div class="banner">You kept ${r.kept.length} — this part reads best with at least ${low}. Bring a few back in from what you set aside.</div>
+    ${r.out.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+       <div class="mini"><button onclick="rankReclaimTooFew(${i})">Bring back</button></div></div>`).join("")}
+    ${r.kept.length>=low? `<div class="btnrow"><button class="primary" onclick="startPlace()">Continue (${r.kept.length} kept)</button></div>`:""}`;
+}
+window.rankReclaimTooFew=(i)=>{
+  const r=rk(); r.kept.push(r.out.splice(i,1)[0]);
+  if(r.kept.length >= ((rk_cfg().scoreCount+1))){ startPlace(); return; }
+  render();
+};
+function rk_cfg(){ return S.part==="vim"?VIM_CFG:INSTINCT_CFG; }
+window.rankZeroContinue=()=>{
+  const r=rk(); r.zeroHandled=true; r.recordedZero=true;
+  if(!r.recorded){ S.record.push(`VIM — declined: nothing kept as important right now`); r.recorded=true; }
+  nextPart();
+};
+
+window.startPlace=()=>{
+  const r=rk();
+  const n=r.kept.length;
+  r.cap = Math.max(4, Math.ceil(n/3)+1);
+  r.placeQueue=shuffle(r.kept); r.placeIdx=0; r.shelves=[[],[],[]];
+  r.stage="place"; render();
+};
+
+function rankPlaceScreen(cfg){
+  const r=rk();
+  const item=r.placeQueue[r.placeIdx];
+  return `${partHeader(cfg)}
+    <p class="progress">Placing ${r.placeIdx+1} of ${r.placeQueue.length}</p>
+    <div class="card fadein">${esc(item.text)}</div>
+    <p class="note" style="margin-top:10px">${cfg.placePrompt}</p>
+    ${cfg.rowNames.map((name,si)=>{
+       const items=r.shelves[si]; const full=items.length>=r.cap;
+       return `<div class="shelfwrap" data-row="${si}">
+         <button class="shelf" data-full="${full?1:0}" ${full?"disabled":""} onclick="rankPlaceOn(${si})">
+           <div class="shelfhead"><span class="shelfname">${name}</span>
+             ${full?'<span class="full">Full</span>':`<span class="dots">${
+               Array.from({length:r.cap},(_,d)=>`<span class="dot ${d<items.length?"on":""}"></span>`).join("")}</span>`}
+           </div>
+         </button>
+         <div class="chips">${items.map(x=>`<button class="chipbtn" onclick="rankUnplace('${x.id}')">${esc(x.text)}</button>`).join("")}</div>
+       </div>`;}).join("")}
+    ${r.placeIdx>0? `<div class="btnrow"><button class="ghost" onclick="rankUndoPlace()">Undo last placement</button></div>`:""}`;
+}
+window.rankPlaceOn=(si)=>{
+  const r=rk(); if(r.shelves[si].length>=r.cap)return;
+  r.shelves[si].push(r.placeQueue[r.placeIdx]); r.placeIdx++; render();
+};
+window.rankUnplace=(id)=>{
+  const r=rk();
+  for(const sh of r.shelves){
+    const k=sh.findIndex(x=>x.id===id);
+    if(k>-1){
+      const it=sh.splice(k,1)[0];
+      const q=r.placeQueue.indexOf(it);
+      if(q>-1){ r.placeQueue.splice(q,1); if(q<r.placeIdx) r.placeIdx--; }
+      r.placeQueue.splice(r.placeIdx,0,it);
+      break;
+    }
+  }
+  render();
+};
+window.rankUndoPlace=()=>{
+  const r=rk(); if(r.placeIdx===0)return;
+  r.placeIdx--;
+  const it=r.placeQueue[r.placeIdx];
+  for(const sh of r.shelves){const k=sh.indexOf(it); if(k>-1){sh.splice(k,1);break;}}
+  render();
+};
+
+function rankReviewScreen(cfg){
+  const r=rk();
+  const placed=r.shelves[0].length+r.shelves[1].length+r.shelves[2].length;
+  const guard = placed!==r.kept.length
+    ? `<div class="banner warn">Placed ${placed} but ${r.kept.length} were kept — a statement is missing. Please restart this part.</div>
+       <div class="btnrow"><button class="primary" onclick="startPlace()">Restart placing</button></div>` : "";
+  return `${partHeader(cfg)}
+    <h2>Look it over</h2><p class="note">Move anything between rows.</p>
+    ${guard}
+    ${cfg.rowNames.map((name,si)=>`<p class="shelftitle">${name}</p>`+
+      r.shelves[si].map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+        <div class="mini">
+          <button ${si>0&&r.shelves[si-1].length<r.cap?"":"disabled"} onclick="rankMoveShelf(${si},${i},-1)">↑ row</button>
+          <button ${si<2&&r.shelves[si+1].length<r.cap?"":"disabled"} onclick="rankMoveShelf(${si},${i},1)">↓ row</button>
+        </div></div>`).join("")).join("")}
+    ${placed===r.kept.length?`<div class="btnrow"><button class="primary" onclick="startRefine()">These rows are right</button></div>`:""}`;
+}
+window.rankMoveShelf=(si,i,dir)=>{
+  const r=rk(); const tgt=si+dir;
+  if(tgt<0||tgt>2||r.shelves[tgt].length>=r.cap)return;
+  r.shelves[tgt].push(r.shelves[si].splice(i,1)[0]); render();
+};
+window.startRefine=()=>{ const r=rk(); r.refineShelf=0; r.locked=[]; r.stage="refine"; render(); };
+
+function rankRefineScreen(cfg){
+  const r=rk();
+  const si=r.refineShelf;
+  const done=r.locked.filter(x=>x.shelf===si);
+  const rest=r.shelves[si].filter(it=>!r.locked.some(l=>l.item===it));
+  const offset=r.locked.filter(x=>x.shelf<si).length;
+  return `${partHeader(cfg)}
+    <p class="progress">${cfg.rowNames[si]} — order it</p>
+    <p class="note">${cfg.refinePrompt}</p>
+    ${done.map((l,k)=>`<button class="pick" data-locked="1" disabled><span class="badge">${offset+k+1}</span>${esc(l.item.text)}</button>`).join("")}
+    ${rest.map(it=>`<button class="pick" onclick="rankLockPick(${si},'${it.id}')">${esc(it.text)}</button>`).join("")}`;
+}
+window.rankLockPick=(si,id)=>{
+  const r=rk(); const it=r.shelves[si].find(x=>x.id===id);
+  r.locked.push({shelf:si,item:it}); render();
+};
+
+function rankResultScreen(cfg){
+  const r=rk();
+  const order=r.locked.map(l=>l.item);
+  const scored=order.slice(0,cfg.scoreCount);
+  const code=cfg.buildCode? cfg.buildCode(scored): scored.map(x=>x.id).join(" ");
+  if(!r.recorded){
+    const rowsTxt=r.shelves.map((sh,i)=>`R${i+1}[${sh.map(x=>x.id).join(" ")}]`).join(" ");
+    const asideTxt=r.out.map(x=>`${x.id}(R${x.round||"?"})`).join(" ")||"none";
+    const text=`${cfg.label} — order: ${order.map(x=>x.id).join(" ")} | rows: ${rowsTxt} | set aside: ${asideTxt}`;
+    S.record.push(text); r.recorded=true;
+  }
+  return `${partHeader(cfg)}
+    <div class="banner">${cfg.label} complete.</div>
+    <div class="code" style="font-size:16px;letter-spacing:.08em">${esc(order.map(x=>x.id).join(" · "))}</div>
+    <p class="codesub">${order.length} ranked (top ${cfg.scoreCount} scored) · ${r.out.length} set aside${r.recordedZero?' · zero-kept, declined':''}</p>
+    <div class="btnrow"><button class="primary" onclick="nextPart()">Continue</button></div>`;
+}
+
+function partHeader(cfg){
+  const idx=PARTS.indexOf(S.part);
+  const pct = Math.round((idx/(PARTS.length-2))*100);
+  return `<div class="partlabel">${cfg.title}</div>
+    <div class="track"><div class="trackfill" style="width:${pct}%"></div></div>`;
+}
+
+function renderRank(cfg){
+  const r=rk();
+  if(r.stage==="sort"){
+    if(r.idx>=r.serve.length){
+      const low = (cfg.scoreCount+1);
+      if(r.kept.length>cfg.trimHigh){ r.stage="trim"; }
+      else if(cfg.zeroPrompt && r.kept.length===0){ r.stage="zerocheck"; }
+      else if(r.kept.length<low){ r.stage="toofew"; }
+      else { startPlace(); return; }
+      render(); return;
+    }
+    app.innerHTML=rankSortScreen(cfg); return;
+  }
+  if(r.stage==="zerocheck"){ app.innerHTML=rankZeroLowScreen(cfg); return; }
+  if(r.stage==="toofew"){ app.innerHTML=rankTooFewScreen(cfg); return; }
+  if(r.stage==="trim"){ app.innerHTML=rankTrimScreen(cfg); return; }
+  if(r.stage==="place"){
+    if(r.placeIdx>=r.placeQueue.length){ r.stage="review"; renderRank(cfg); return; }
+    app.innerHTML=rankPlaceScreen(cfg); return;
+  }
+  if(r.stage==="review"){ app.innerHTML=rankReviewScreen(cfg); return; }
+  if(r.stage==="refine"){
+    while(r.refineShelf<3 && r.shelves[r.refineShelf].length - r.locked.filter(x=>x.shelf===r.refineShelf).length<=1){
+      const si=r.refineShelf;
+      const rest=r.shelves[si].filter(it=>!r.locked.some(l=>l.item===it));
+      rest.forEach(it=>r.locked.push({shelf:si,item:it}));
+      r.refineShelf++;
+    }
+    if(r.refineShelf>=3){ r.stage="result"; renderRank(cfg); return; }
+    app.innerHTML=rankRefineScreen(cfg); return;
+  }
+  if(r.stage==="result"){ app.innerHTML=rankResultScreen(cfg); return; }
+}
+
+const INSTINCT_CFG={
+  title:"Instinct", stem:"When something has your attention, do you tend to…?",
+  yes:"Regularly", no:"Not regularly", terminalQ:true,
+  trimHigh:12, trimMsg:n=>`You kept ${n}. Set aside the ones you do least — down to twelve, but no fewer than nine.`,
+  rowNames:["Row 1 · Most regular","Row 2 · In between","Row 3 · Least regular"],
+  placePrompt:"Compared with the others you've kept, how regularly do you do this? Tap a row — or tap a placed statement to pull it back out.",
+  refinePrompt:"Of these, which do you do most? Tap it; then the next.",
+  scoreCount:8, label:"Instinct",
+  buildCode:(scored)=>scored.map(x=>x.g).join("")
+};
+const VIM_CFG={
+  title:"VIM", stem:"Is this important to you right now?",
+  yes:"Important right now", no:"Not so much", terminalQ:false,
+  trimHigh:15, trimMsg:n=>n>15?`Quite a few made the cut. Set aside the ones that matter least right now — down to fifteen, but no fewer than ten.`:`${n} kept.`,
+  zeroPrompt:"Nothing pressing at the moment? If even one of these tugs, pick it — otherwise carry on.",
+  rowNames:["Row 1 · Matters most right now","Row 2 · In between","Row 3 · Matters least right now"],
+  placePrompt:"Compared with the others you've kept, how much does this matter right now? Tap a row — or tap a placed statement to pull it back out.",
+  refinePrompt:"Of these, which matters most? Tap it; then the next.",
+  scoreCount:9, label:"VIM",
+  buildCode:(scored)=>scored.map(x=>x.g).join(" ")
+};
+
+/* ============================= LEAN ============================= */
+function renderLean(){
+  const st=S.lean;
+  if(st.idx>=st.order.length){
+    if(!st.recorded){
+      const text="Lean — "+st.picks.map(p=>`${p.code}:1st=${p.first} 2nd=${p.second}`).join(" | ");
+      S.record.push(text); st.recorded=true;
+    }
+    return `${partHeader({title:"Lean"})}
+      <div class="banner">Lean complete.</div>
+      ${st.picks.map(p=>`<div class="res"><span class="badge2">${p.code.slice(3)}</span>1st ${p.first} · 2nd ${p.second}</div>`).join("")}
+      <div class="btnrow"><button class="primary" onclick="nextPart()">Continue</button></div>`;
+  }
+  const scenario=LEAN[st.order[st.idx]];
+  if(!st.curOrder || st._curIdx!==st.idx){ st.curOrder=shuffle(scenario.opts); st._curIdx=st.idx; st.first=null; st.second=null; }
+  const twopickMsg = !st.first ? "Pick two: your most likely response, then your second most likely."
+    : !st.second ? "Good — now tap your second most likely." : "Both picked. Tap Continue, or tap either to change it.";
+  return `${partHeader({title:"Lean"})}
+    <p class="progress">Situation ${st.idx+1} of ${LEAN.length}</p>
+    <p class="stem">"${esc(scenario.situation)}"</p>
+    <p class="note">Imagine others you could work with are available to call on or collaborate with. Which way would you naturally go?</p>
+    <p class="twopick">${twopickMsg}</p>
+    ${st.curOrder.map(([tag,text])=>{
+      const state = st.first===tag?"first":(st.second===tag?"second":"");
+      return `<button class="opt" data-state="${state}" onclick="leanPick('${tag}')">
+        ${state==="first"?'<span class="tag">Most likely</span>':state==="second"?'<span class="tag">Second most likely</span>':""}
+        ${esc(text)}</button>`;
+    }).join("")}
+    <div class="btnrow"><button class="primary" ${st.first&&st.second?"":"disabled"} onclick="leanCommit()">Continue</button></div>`;
+}
+window.leanPick=(tag)=>{
+  const st=S.lean;
+  if(st.first===tag){ st.first=st.second; st.second=null; render(); return; }
+  if(st.second===tag){ st.second=null; render(); return; }
+  if(!st.first){ st.first=tag; }
+  else if(!st.second){ st.second=tag; }
+  else { st.first=tag; st.second=null; }
+  render();
+};
+window.leanCommit=()=>{
+  const st=S.lean; const scenario=LEAN[st.order[st.idx]];
+  st.picks.push({code:scenario.code, instinct:scenario.instinct, first:st.first, second:st.second});
+  st.idx++; st.curOrder=null; render();
+};
+
+/* ============================= COHERENCE ============================= */
+function renderCoherence(){
+  const c=S.coh;
+  if(c.stage!=="branches" && c.stage!=="done"){
+    return renderCohSorter();
+  }
+  if(c.stage==="branches" && c.bIdx>=c.branches.length){ c.stage="done"; }
+  if(c.stage==="branches"){
+    return renderCohBranch();
+  }
+  if(c.stage==="done"){
+    const sortTicks=Object.keys(c.ticked).filter(k=>c.ticked[k]);
+    const branchTicks=Object.keys(c.bTicked).filter(k=>c.bTicked[k]);
+    if(!c.recorded){
+      const text=`Coherence — sorter: ${sortTicks.join(" ")||"none"} | branch items: ${branchTicks.join(" ")||"none"}`;
+      S.record.push(text); c.recorded=true;
+    }
+    return `${partHeader({title:"Coherence"})}
+      <div class="banner">Coherence complete.</div>
+      <p class="note">Sorter ticks: ${sortTicks.join(", ")||"none"}</p>
+      <p class="note">Branch ticks: ${branchTicks.join(", ")||"none"}</p>
+      <div class="btnrow"><button class="primary" onclick="nextPart()">Continue</button></div>`;
+  }
+}
+function renderCohSorter(){
+  const c=S.coh;
+  const anyTicked=Object.values(c.ticked).some(v=>v);
+  return `${partHeader({title:"Coherence"})}
+    <h2>Your work, right now</h2>
+    <p class="note">Thinking about your current work — pick every statement that's true for you.</p>
+    ${COH_SORT.map(([id,text])=>`<label class="tick">
+      <input type="checkbox" ${c.ticked[id]?"checked":""} onchange="cohTickSort('${id}',this.checked)">
+      <span class="txt">${esc(text)}</span></label>`).join("")}
+    ${!anyTicked && c.showZeroPrompt? `<div class="banner">Nothing standing out right now? If even one feels true, tick it — otherwise continue.</div>`:""}
+    <div class="btnrow"><button class="primary" onclick="cohFinishSorter()">Continue</button></div>`;
+}
+window.cohTickSort=(id,val)=>{ S.coh.ticked[id]=val; render(); };
+window.cohFinishSorter=()=>{
+  const c=S.coh;
+  const anyTicked=Object.values(c.ticked).some(v=>v);
+  if(!anyTicked && !c.showZeroPrompt){ c.showZeroPrompt=true; render(); return; }
+  const order={"Expression":0,"Support":1,"Felt-state":2};
+  const routed=[];
+  for(const [id,,branch] of COH_SORT){ if(branch && c.ticked[id]) routed.push(branch); }
+  c.branches = [...new Set(routed)].sort((a,b)=>order[a]-order[b]);
+  c.bIdx=0; c.stage="branches"; render();
+};
+function branchItems(name){ return name==="Expression"?COH_E : name==="Support"?COH_V : COH_F; }
+function renderCohBranch(){
+  const c=S.coh; const name=c.branches[c.bIdx];
+  const items=branchItems(name);
+  const preamble = name==="Expression" ? "Pick everything that rings true." :
+                   name==="Support" ? "Pick everything that rings true." :
+                   "Pick everything that rings true.";
+  return `${partHeader({title:"Coherence"})}
+    <p class="progress">A few more statements</p>
+    <p class="note">${preamble}</p>
+    ${items.map(row=>{const id=row[0],text=row[1];
+      return `<label class="tick">
+        <input type="checkbox" ${c.bTicked[id]?"checked":""} onchange="cohTickBranch('${id}',this.checked)">
+        <span class="txt">${esc(text)}</span></label>`;}).join("")}
+    <div class="btnrow"><button class="primary" onclick="cohNextBranch()">Continue</button></div>`;
+}
+window.cohTickBranch=(id,val)=>{ S.coh.bTicked[id]=val; render(); };
+window.cohNextBranch=()=>{ S.coh.bIdx++; render(); };
+
+/* ============================= FLOW ============================= */
+function nextPart(){
+  const i=PARTS.indexOf(S.part);
+  S.part=PARTS[i+1];
+  render();
+}
+function render(){
+  if(S.part==="intro"){
+    app.innerHTML=`<h1>The Illuminator</h1><p class="note">Full-suite prototype — Instinct, Lean, VIM, Coherence in one sitting.</p>
+      <div class="banner">This link is for testing the mechanics end to end. Nothing is saved beyond this browser tab.</div>
+      <p class="note" style="opacity:.5;font-size:11px;margin-top:6px">${BUILD_TAG}</p>
+      <div class="spacer"></div>
+      <div class="btnrow"><button class="primary" onclick="nextPart()">Begin</button></div>`;
+    return;
+  }
+  if(S.part==="instinct"){ renderRank(INSTINCT_CFG); return; }
+  if(S.part==="lean"){ app.innerHTML=renderLean(); return; }
+  if(S.part==="vim"){ renderRank(VIM_CFG); return; }
+  if(S.part==="coherence"){ app.innerHTML=renderCoherence(); return; }
+  if(S.part==="done"){
+    const full=S.record.join("\n\n");
+    app.innerHTML=`<h1>The Illuminator</h1><div class="banner">All four parts complete. Full combined record below.</div>
+      <div class="btnrow"><button class="primary" onclick="copyAll(this)">Copy full record</button>
+      <button onclick="reset()">Run it again</button></div>
+      <textarea class="record" readonly id="fullrec"></textarea>`;
+    document.getElementById("fullrec").value=full;
+    return;
+  }
+}
+window.copyAll=(btn)=>{
+  const t=document.getElementById("fullrec");
+  const fallback=()=>{try{t.select();const ok=document.execCommand("copy");
+    btn.textContent=ok?"Copied ✓":"Copy failed — select the box below";}catch(e){btn.textContent="Copy failed — select the box below";}};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t.value).then(()=>{btn.textContent="Copied ✓";}).catch(fallback);
+  } else fallback();
+};
+window.reset=reset;
+/* ============================= BUILD TAG & DEBUG PANEL ============================= */
+const BUILD_TAG = "trial-build 2026-07-17 · floor 9/10, true rounds, VIM zero-prompt multi-pick";
+try{ console.log("[Illuminator]", BUILD_TAG); }catch(e){}
+const DEBUG = (()=>{ try{ return new URLSearchParams(location.search).get("debug")==="1"; }catch(e){ return false; } })();
+
+function seedInstinctKept(n){
+  const r=S.instinct;
+  r.kept=INSTINCT.slice(0,n).map(x=>({...x}));
+  r.out=INSTINCT.slice(n).map(x=>({...x}));
+  r.idx=INSTINCT.length; r.stage="sort";
+}
+function seedVimKept(n){
+  const r=S.vim;
+  r.kept=VIM.slice(0,n).map(x=>({...x}));
+  r.out=VIM.slice(n).map(x=>({...x}));
+  r.idx=VIM.length; r.stage="sort";
+}
+function autoPlaceAll(r){
+  let guard=0;
+  while(r.placeIdx<r.placeQueue.length && guard++<200){
+    let placed=false;
+    for(let tries=0; tries<3 && !placed; tries++){
+      const si=(r.placeIdx+tries)%3;
+      if(r.shelves[si].length<r.cap){ r.shelves[si].push(r.placeQueue[r.placeIdx]); r.placeIdx++; placed=true; }
+    }
+    if(!placed) break;
+  }
+}
+window.devJump=(target)=>{
+  reset();
+  if(target==="instinct-place"){ S.part="instinct"; seedInstinctKept(11); startPlace(); }
+  else if(target==="instinct-result"){ S.part="instinct"; seedInstinctKept(11); startPlace(); autoPlaceAll(S.instinct); }
+  else if(target==="lean"){ S.part="lean"; }
+  else if(target==="vim-zero"){ S.part="vim"; seedVimKept(0); S.vim.stage="zerocheck"; }
+  else if(target==="vim-place"){ S.part="vim"; seedVimKept(12); startPlace(); }
+  else if(target==="coherence"){ S.part="coherence"; }
+  else if(target==="done"){ S.part="done"; S.record=["(dev jump — no real answers behind this)"]; }
+  render();
+};
+if(DEBUG){
+  try{
+    const bar=document.createElement("div");
+    bar.style.cssText="position:fixed;bottom:0;left:0;right:0;background:#222;color:#fff;"+
+      "padding:8px;display:flex;gap:6px;flex-wrap:wrap;z-index:9999;font:12px sans-serif;align-items:center;";
+    const btn=(label,onclick)=>`<button style="padding:5px 9px;border-radius:6px;border:none;cursor:pointer" onclick="${onclick}">${label}</button>`;
+    bar.innerHTML =
+      `<span style="opacity:.6;margin-right:6px">DEBUG —</span>` +
+      btn("Intro","reset()") +
+      btn("Instinct: place","devJump('instinct-place')") +
+      btn("Instinct: result","devJump('instinct-result')") +
+      btn("Lean","devJump('lean')") +
+      btn("VIM: zero-prompt","devJump('vim-zero')") +
+      btn("VIM: place","devJump('vim-place')") +
+      btn("Coherence","devJump('coherence')") +
+      btn("Done","devJump('done')");
+    document.body.appendChild(bar);
+  }catch(e){}
+}
+
+reset();
+</script>
+</body>
+</html>
