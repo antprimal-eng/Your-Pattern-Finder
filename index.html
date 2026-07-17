@@ -652,6 +652,7 @@ function render(){
   if(S.part==="intro"){
     app.innerHTML=`<h1>The Illuminator</h1><p class="note">Full-suite prototype — Instinct, Lean, VIM, Coherence in one sitting.</p>
       <div class="banner">This link is for testing the mechanics end to end. Nothing is saved beyond this browser tab.</div>
+      <p class="note" style="opacity:.5;font-size:11px;margin-top:6px">${BUILD_TAG}</p>
       <div class="spacer"></div>
       <div class="btnrow"><button class="primary" onclick="nextPart()">Begin</button></div>`;
     return;
@@ -679,6 +680,65 @@ window.copyAll=(btn)=>{
   } else fallback();
 };
 window.reset=reset;
+/* ============================= BUILD TAG & DEBUG PANEL ============================= */
+const BUILD_TAG = "trial-build 2026-07-17 · floor 9/10, true rounds, VIM zero-prompt multi-pick";
+try{ console.log("[Illuminator]", BUILD_TAG); }catch(e){}
+const DEBUG = (()=>{ try{ return new URLSearchParams(location.search).get("debug")==="1"; }catch(e){ return false; } })();
+
+function seedInstinctKept(n){
+  const r=S.instinct;
+  r.kept=INSTINCT.slice(0,n).map(x=>({...x}));
+  r.out=INSTINCT.slice(n).map(x=>({...x}));
+  r.idx=INSTINCT.length; r.stage="sort";
+}
+function seedVimKept(n){
+  const r=S.vim;
+  r.kept=VIM.slice(0,n).map(x=>({...x}));
+  r.out=VIM.slice(n).map(x=>({...x}));
+  r.idx=VIM.length; r.stage="sort";
+}
+function autoPlaceAll(r){
+  let guard=0;
+  while(r.placeIdx<r.placeQueue.length && guard++<200){
+    let placed=false;
+    for(let tries=0; tries<3 && !placed; tries++){
+      const si=(r.placeIdx+tries)%3;
+      if(r.shelves[si].length<r.cap){ r.shelves[si].push(r.placeQueue[r.placeIdx]); r.placeIdx++; placed=true; }
+    }
+    if(!placed) break;
+  }
+}
+window.devJump=(target)=>{
+  reset();
+  if(target==="instinct-place"){ S.part="instinct"; seedInstinctKept(11); startPlace(); }
+  else if(target==="instinct-result"){ S.part="instinct"; seedInstinctKept(11); startPlace(); autoPlaceAll(S.instinct); }
+  else if(target==="lean"){ S.part="lean"; }
+  else if(target==="vim-zero"){ S.part="vim"; seedVimKept(0); S.vim.stage="zerocheck"; }
+  else if(target==="vim-place"){ S.part="vim"; seedVimKept(12); startPlace(); }
+  else if(target==="coherence"){ S.part="coherence"; }
+  else if(target==="done"){ S.part="done"; S.record=["(dev jump — no real answers behind this)"]; }
+  render();
+};
+if(DEBUG){
+  try{
+    const bar=document.createElement("div");
+    bar.style.cssText="position:fixed;bottom:0;left:0;right:0;background:#222;color:#fff;"+
+      "padding:8px;display:flex;gap:6px;flex-wrap:wrap;z-index:9999;font:12px sans-serif;align-items:center;";
+    const btn=(label,onclick)=>`<button style="padding:5px 9px;border-radius:6px;border:none;cursor:pointer" onclick="${onclick}">${label}</button>`;
+    bar.innerHTML =
+      `<span style="opacity:.6;margin-right:6px">DEBUG —</span>` +
+      btn("Intro","reset()") +
+      btn("Instinct: place","devJump('instinct-place')") +
+      btn("Instinct: result","devJump('instinct-result')") +
+      btn("Lean","devJump('lean')") +
+      btn("VIM: zero-prompt","devJump('vim-zero')") +
+      btn("VIM: place","devJump('vim-place')") +
+      btn("Coherence","devJump('coherence')") +
+      btn("Done","devJump('done')");
+    document.body.appendChild(bar);
+  }catch(e){}
+}
+
 reset();
 </script>
 </body>
