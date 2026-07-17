@@ -222,6 +222,35 @@ function shuffleNoAdjacentGroup(items){
   }
   return a;
 }
+function buildRounds(items){
+  // groups items by .g, deals one shuffled member of every group per round
+  // (so a group's members are guaranteed spread one-per-round), shuffles
+  // order within each round, then fences any accidental same-group repeat
+  // that lands right across a round boundary.
+  const byGroup={};
+  items.forEach(it=>{ (byGroup[it.g]=byGroup[it.g]||[]).push(it); });
+  const groups=Object.keys(byGroup);
+  const k=Math.min(...groups.map(g=>byGroup[g].length));
+  groups.forEach(g=>{ byGroup[g]=shuffle(byGroup[g]); });
+  const rounds=[];
+  for(let ri=0; ri<k; ri++){
+    const round=shuffle(groups.map(g=>{ const it=byGroup[g][ri]; it.round=ri+1; return it; }));
+    rounds.push(round);
+  }
+  const flat=rounds.flat();
+  for(let b=1;b<rounds.length;b++){
+    const bi=b*groups.length;
+    if(flat[bi] && flat[bi-1] && flat[bi].g===flat[bi-1].g){
+      for(let m=bi+1;m<flat.length;m++){
+        if(flat[m].g!==flat[bi-1].g && (bi+1>=flat.length||flat[m].g!==flat[bi+1]?.g)){
+          [flat[bi],flat[m]]=[flat[m],flat[bi]]; break;
+        }
+      }
+    }
+  }
+  flat.forEach((it,i)=>{ it.serveIdx=i+1; });
+  return flat;
+}
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const app=document.getElementById("app");
 
@@ -229,8 +258,8 @@ const app=document.getElementById("app");
 let S={};
 function reset(){
   S={part:"intro", record:[]};
-  S.instinct=newRankState(shuffleNoAdjacentGroup(INSTINCT));
-  S.vim=newRankState(shuffleNoAdjacentGroup(VIM));
+  S.instinct=newRankState(buildRounds(INSTINCT));
+  S.vim=newRankState(buildRounds(VIM));
   S.lean={order:shuffle(LEAN.map((s,i)=>i)), idx:0, picks:[]};
   S.coh={sortOrder:COH_SORT, ticked:{}, branches:[], bIdx:0, bTicked:{}, showZeroPrompt:false};
   render();
@@ -269,29 +298,57 @@ window.rankUndoSort=()=>{
 
 function rankTrimScreen(cfg){
   const r=rk();
-  const over = r.kept.length > cfg.trimHigh;
+  const low = (cfg.scoreCount+1);
+  const atFloor = r.kept.length<=low;
   return `${partHeader(cfg)}
     <div class="banner">${cfg.trimMsg(r.kept.length)}</div>
+    ${atFloor? `<p class="note">That's as few as this part can score — the rest stay in.</p>`:""}
     ${r.kept.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
-       <div class="mini"><button onclick="rankTrimSetAside(${i})">Set aside</button></div></div>`).join("")}
+       <div class="mini">${atFloor?`<button disabled>Set aside</button>`:`<button onclick="rankTrimSetAside(${i})">Set aside</button>`}</div></div>`).join("")}
     <div class="btnrow"><button class="primary" onclick="rankFinishTrim()">Continue (${r.kept.length} kept)</button></div>`;
 }
-window.rankTrimSetAside=(i)=>{ const r=rk(); r.out.push(r.kept.splice(i,1)[0]); render(); };
+window.rankTrimSetAside=(i)=>{
+  const r=rk(); const cfg=S.part==="vim"?VIM_CFG:INSTINCT_CFG;
+  const low=(cfg.scoreCount+1);
+  if(r.kept.length<=low) return;   // floor reached — no further set-aside
+  r.out.push(r.kept.splice(i,1)[0]); render();
+};
 window.rankFinishTrim=()=>{ startPlace(); };
 
 function rankZeroLowScreen(cfg){
-  // 0 kept (VIM only) or very low kept: gentle prompt / proceed
   const r=rk();
-  if(cfg.zeroPrompt && r.kept.length===0 && !r.zeroHandled){
-    return `${partHeader(cfg)}
-      <div class="banner">${cfg.zeroPrompt}</div>
+  const n=r.kept.length;
+  return `${partHeader(cfg)}
+    <div class="banner">${cfg.zeroPrompt}</div>
+    ${n>0? `<p class="note" style="margin-top:14px"><strong>Picked so far (${n}):</strong></p>
+      ${r.kept.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+         <div class="mini"><button onclick="rankUnreclaim(${i})">Remove</button></div></div>`).join("")}`:""}
+    ${r.out.length? `<p class="note" style="margin-top:14px">${n>0?"Anything else?":"Pick any that tug at you — as many as apply:"}</p>
       ${r.out.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
-         <div class="mini"><button onclick="rankReclaim(${i})">Pick this one</button></div></div>`).join("")}
-      <div class="btnrow"><button onclick="rankZeroContinue()">Nothing pressing — continue</button></div>`;
-  }
-  return null;
+         <div class="mini"><button onclick="rankReclaim(${i})">Pick this one</button></div></div>`).join("")}`:""}
+    <div class="btnrow">
+      ${n>0? `<button class="primary" onclick="rankZeroFinish()">Continue with ${n} picked</button>`
+            : `<button onclick="rankZeroContinue()">Nothing pressing — continue</button>`}
+    </div>`;
 }
-window.rankReclaim=(i)=>{ const r=rk(); r.kept.push(r.out.splice(i,1)[0]); r.zeroHandled=true; startPlace(); };
+window.rankReclaim=(i)=>{ const r=rk(); r.kept.push(r.out.splice(i,1)[0]); r.zeroHandled=true; render(); };
+window.rankUnreclaim=(i)=>{ const r=rk(); r.out.push(r.kept.splice(i,1)[0]); render(); };
+window.rankZeroFinish=()=>{ const r=rk(); r.zeroHandled=true; startPlace(); };
+
+function rankTooFewScreen(cfg){
+  const r=rk(); const low=(cfg.scoreCount+1);
+  return `${partHeader(cfg)}
+    <div class="banner">You kept ${r.kept.length} — this part reads best with at least ${low}. Bring a few back in from what you set aside.</div>
+    ${r.out.map((it,i)=>`<div class="listcard"><div class="txt">${esc(it.text)}</div>
+       <div class="mini"><button onclick="rankReclaimTooFew(${i})">Bring back</button></div></div>`).join("")}
+    ${r.kept.length>=low? `<div class="btnrow"><button class="primary" onclick="startPlace()">Continue (${r.kept.length} kept)</button></div>`:""}`;
+}
+window.rankReclaimTooFew=(i)=>{
+  const r=rk(); r.kept.push(r.out.splice(i,1)[0]);
+  if(r.kept.length >= ((rk_cfg().scoreCount+1))){ startPlace(); return; }
+  render();
+};
+function rk_cfg(){ return S.part==="vim"?VIM_CFG:INSTINCT_CFG; }
 window.rankZeroContinue=()=>{
   const r=rk(); r.zeroHandled=true; r.recordedZero=true;
   if(!r.recorded){ S.record.push(`VIM — declined: nothing kept as important right now`); r.recorded=true; }
@@ -400,7 +457,8 @@ function rankResultScreen(cfg){
   const code=cfg.buildCode? cfg.buildCode(scored): scored.map(x=>x.id).join(" ");
   if(!r.recorded){
     const rowsTxt=r.shelves.map((sh,i)=>`R${i+1}[${sh.map(x=>x.id).join(" ")}]`).join(" ");
-    const text=`${cfg.label} — order: ${order.map(x=>x.id).join(" ")} | rows: ${rowsTxt} | set aside: ${r.out.map(x=>x.id).join(" ")||"none"}`;
+    const asideTxt=r.out.map(x=>`${x.id}(R${x.round||"?"})`).join(" ")||"none";
+    const text=`${cfg.label} — order: ${order.map(x=>x.id).join(" ")} | rows: ${rowsTxt} | set aside: ${asideTxt}`;
     S.record.push(text); r.recorded=true;
   }
   return `${partHeader(cfg)}
@@ -421,14 +479,17 @@ function renderRank(cfg){
   const r=rk();
   if(r.stage==="sort"){
     if(r.idx>=r.serve.length){
+      const low = (cfg.scoreCount+1);
       if(r.kept.length>cfg.trimHigh){ r.stage="trim"; }
       else if(cfg.zeroPrompt && r.kept.length===0){ r.stage="zerocheck"; }
+      else if(r.kept.length<low){ r.stage="toofew"; }
       else { startPlace(); return; }
       render(); return;
     }
     app.innerHTML=rankSortScreen(cfg); return;
   }
   if(r.stage==="zerocheck"){ app.innerHTML=rankZeroLowScreen(cfg); return; }
+  if(r.stage==="toofew"){ app.innerHTML=rankTooFewScreen(cfg); return; }
   if(r.stage==="trim"){ app.innerHTML=rankTrimScreen(cfg); return; }
   if(r.stage==="place"){
     if(r.placeIdx>=r.placeQueue.length){ r.stage="review"; renderRank(cfg); return; }
@@ -451,7 +512,7 @@ function renderRank(cfg){
 const INSTINCT_CFG={
   title:"Instinct", stem:"When something has your attention, do you tend to…?",
   yes:"Regularly", no:"Not regularly", terminalQ:true,
-  trimHigh:12, trimMsg:n=>`You kept ${n}. Set aside the ones you do least — down to twelve (or fewer, if you like).`,
+  trimHigh:12, trimMsg:n=>`You kept ${n}. Set aside the ones you do least — down to twelve, but no fewer than nine.`,
   rowNames:["Row 1 · Most regular","Row 2 · In between","Row 3 · Least regular"],
   placePrompt:"Compared with the others you've kept, how regularly do you do this? Tap a row — or tap a placed statement to pull it back out.",
   refinePrompt:"Of these, which do you do most? Tap it; then the next.",
@@ -461,7 +522,7 @@ const INSTINCT_CFG={
 const VIM_CFG={
   title:"VIM", stem:"Is this important to you right now?",
   yes:"Important right now", no:"Not so much", terminalQ:false,
-  trimHigh:15, trimMsg:n=>n>15?`Quite a few made the cut. Set aside the ones that matter least right now — down to fifteen.`:`${n} kept.`,
+  trimHigh:15, trimMsg:n=>n>15?`Quite a few made the cut. Set aside the ones that matter least right now — down to fifteen, but no fewer than ten.`:`${n} kept.`,
   zeroPrompt:"Nothing pressing at the moment? If even one of these tugs, pick it — otherwise carry on.",
   rowNames:["Row 1 · Matters most right now","Row 2 · In between","Row 3 · Matters least right now"],
   placePrompt:"Compared with the others you've kept, how much does this matter right now? Tap a row — or tap a placed statement to pull it back out.",
