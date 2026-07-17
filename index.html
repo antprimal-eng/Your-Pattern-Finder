@@ -736,6 +736,10 @@ if(DEBUG){
       btn("Coherence","devJump('coherence')") +
       btn("Done","devJump('done')");
     document.body.appendChild(bar);
+    const applyPad=()=>{ document.body.style.paddingBottom=(bar.offsetHeight+16)+"px"; };
+    applyPad();
+    window.addEventListener("resize", applyPad);
+    setTimeout(applyPad, 50); // catch late font/layout settling
   }catch(e){}
 }
 
